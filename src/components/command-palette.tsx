@@ -1,172 +1,168 @@
-import { useEffect, useState, useMemo, createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
+  Command as CommandPrimitive,
+} from "cmdk";
 import { useStore } from "@/lib/store";
-import { Rocket, FolderKanban, BookOpen, Plug, Settings, Bell, Home, Sparkles, Calendar, User } from "lucide-react";
+import {
+  Home, Rocket, FolderKanban, Plug, Sparkles, BookOpen, Calendar, Bell,
+  User as UserIcon, Settings as SettingsIcon, FileText, Search,
+} from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-interface CommandPaletteContextValue {
+interface CommandPaletteCtx {
   open: () => void;
+  close: () => void;
+  isOpen: boolean;
 }
 
-const Ctx = createContext<CommandPaletteContextValue | null>(null);
+const Ctx = createContext<CommandPaletteCtx | null>(null);
 
 export function useCommandPalette() {
-  const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useCommandPalette must be used within CommandPaletteProvider");
-  return ctx;
+  const c = useContext(Ctx);
+  if (!c) throw new Error("CommandPalette not mounted");
+  return c;
 }
 
+const NAV: { label: string; to: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { label: "Home", to: "/home", icon: Home },
+  { label: "Missions", to: "/missions", icon: Rocket },
+  { label: "Projects", to: "/projects", icon: FolderKanban },
+  { label: "Integrations", to: "/integrations", icon: Plug },
+  { label: "AI Models", to: "/ai-models", icon: Sparkles },
+  { label: "Knowledge", to: "/knowledge", icon: BookOpen },
+  { label: "Calendar", to: "/calendar", icon: Calendar },
+  { label: "Notifications", to: "/notifications", icon: Bell },
+  { label: "Profile", to: "/profile", icon: UserIcon },
+  { label: "Settings", to: "/settings", icon: SettingsIcon },
+];
+
 export function CommandPaletteProvider({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { missions, projects, knowledge, integrations, notifications } = useStore();
+  const { missions, projects, knowledge, integrations } = useStore();
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setOpen((o) => !o);
+        setIsOpen((v) => !v);
       }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const nav = useMemo(
-    () => [
-      { label: "Home", to: "/home", icon: Home },
-      { label: "Missions", to: "/missions", icon: Rocket },
-      { label: "Projects", to: "/projects", icon: FolderKanban },
-      { label: "Knowledge", to: "/knowledge", icon: BookOpen },
-      { label: "Integrations", to: "/integrations", icon: Plug },
-      { label: "AI Models", to: "/ai-models", icon: Sparkles },
-      { label: "Calendar", to: "/calendar", icon: Calendar },
-      { label: "Notifications", to: "/notifications", icon: Bell },
-      { label: "Profile", to: "/profile", icon: User },
-      { label: "Settings", to: "/settings", icon: Settings },
-    ],
-    [],
-  );
-
-  const go = (fn: () => void) => {
-    setOpen(false);
-    setTimeout(fn, 0);
+  const go = (to: string) => {
+    setIsOpen(false);
+    navigate({ to });
   };
 
-  const unreadNotifCount = notifications.filter((n) => !n.read && !n.archived).length;
+  const value = useMemo(() => ({ open: () => setIsOpen(true), close: () => setIsOpen(false), isOpen }), [isOpen]);
 
   return (
-    <Ctx.Provider value={{ open: () => setOpen(true) }}>
+    <Ctx.Provider value={value}>
       {children}
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Search missions, projects, knowledge, apps…" />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-2xl overflow-hidden border-border bg-card p-0">
+          <CommandPrimitive className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-3 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.18em] [&_[cmdk-group-heading]]:text-muted-foreground">
+            <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <CommandPrimitive.Input
+                autoFocus
+                placeholder="Search missions, projects, apps, knowledge…"
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              />
+              <span className="rounded-md border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground">ESC</span>
+            </div>
+            <CommandPrimitive.List className="max-h-[420px] overflow-y-auto p-2">
+              <CommandPrimitive.Empty className="p-8 text-center text-sm text-muted-foreground">No results found.</CommandPrimitive.Empty>
 
-          <CommandGroup heading="Navigation">
-            {nav.map((n) => {
-              const Icon = n.icon;
-              return (
-                <CommandItem
-                  key={n.to}
-                  onSelect={() => go(() => navigate({ to: n.to }))}
-                  value={`nav ${n.label}`}
-                >
-                  <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                  {n.label}
-                  {n.to === "/notifications" && unreadNotifCount > 0 && (
-                    <span className="ml-auto rounded-full bg-primary/20 px-2 py-0.5 text-[10px] text-primary">{unreadNotifCount}</span>
-                  )}
-                </CommandItem>
-              );
-            })}
-          </CommandGroup>
-
-          {missions.length > 0 && (
-            <>
-              <CommandSeparator />
-              <CommandGroup heading="Missions">
-                {missions.slice(0, 8).map((m) => (
-                  <CommandItem
-                    key={m.id}
-                    value={`mission ${m.title} ${m.objective}`}
-                    onSelect={() => go(() => navigate({ to: "/missions/$missionId", params: { missionId: m.id } }))}
-                  >
-                    <Rocket className="mr-2 h-4 w-4 text-primary" />
-                    <span className="truncate">{m.title}</span>
-                    <span className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">{m.status.replace("_", " ")}</span>
-                  </CommandItem>
+              <CommandPrimitive.Group heading="Navigation">
+                {NAV.map((n) => (
+                  <Row key={n.to} onSelect={() => go(n.to)} icon={<n.icon className="h-4 w-4 text-primary" />} title={n.label} subtitle={n.to} />
                 ))}
-              </CommandGroup>
-            </>
-          )}
+              </CommandPrimitive.Group>
 
-          {projects.length > 0 && (
-            <>
-              <CommandSeparator />
-              <CommandGroup heading="Projects">
-                {projects.map((p) => (
-                  <CommandItem
-                    key={p.id}
-                    value={`project ${p.name} ${p.description}`}
-                    onSelect={() => go(() => navigate({ to: "/projects/$projectId", params: { projectId: p.id } }))}
-                  >
-                    <span className="mr-2 h-3 w-3 rounded-full" style={{ background: p.color }} />
-                    <span className="truncate">{p.name}</span>
-                    <span className="ml-auto text-[10px] text-muted-foreground">{p.missionCount} missions</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </>
-          )}
+              {missions.length > 0 && (
+                <CommandPrimitive.Group heading="Missions">
+                  {missions.slice(0, 10).map((m) => (
+                    <Row
+                      key={m.id}
+                      value={`mission ${m.title} ${m.objective}`}
+                      onSelect={() => go(`/missions/${m.id}`)}
+                      icon={<Rocket className="h-4 w-4 text-primary" />}
+                      title={m.title}
+                      subtitle={m.status.replace("_", " ")}
+                    />
+                  ))}
+                </CommandPrimitive.Group>
+              )}
 
-          {knowledge.length > 0 && (
-            <>
-              <CommandSeparator />
-              <CommandGroup heading="Knowledge">
-                {knowledge.slice(0, 6).map((k) => (
-                  <CommandItem
-                    key={k.id}
-                    value={`knowledge ${k.name} ${k.tag ?? ""}`}
-                    onSelect={() => go(() => navigate({ to: "/knowledge" }))}
-                  >
-                    <BookOpen className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span className="truncate">{k.name}</span>
-                    <span className="ml-auto text-[10px] text-muted-foreground">{k.size}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </>
-          )}
+              {projects.length > 0 && (
+                <CommandPrimitive.Group heading="Projects">
+                  {projects.map((p) => (
+                    <Row
+                      key={p.id}
+                      value={`project ${p.name} ${p.description}`}
+                      onSelect={() => go(`/projects/${p.id}`)}
+                      icon={<FolderKanban className="h-4 w-4 text-secondary" />}
+                      title={p.name}
+                      subtitle={p.description}
+                    />
+                  ))}
+                </CommandPrimitive.Group>
+              )}
 
-          {integrations.length > 0 && (
-            <>
-              <CommandSeparator />
-              <CommandGroup heading="Apps">
+              {knowledge.length > 0 && (
+                <CommandPrimitive.Group heading="Knowledge">
+                  {knowledge.map((k) => (
+                    <Row
+                      key={k.id}
+                      value={`knowledge ${k.name} ${k.tag ?? ""}`}
+                      onSelect={() => go("/knowledge")}
+                      icon={<FileText className="h-4 w-4 text-primary" />}
+                      title={k.name}
+                      subtitle={`${k.size} · used ${k.missionUsage}×`}
+                    />
+                  ))}
+                </CommandPrimitive.Group>
+              )}
+
+              <CommandPrimitive.Group heading="Apps">
                 {integrations.map((i) => (
-                  <CommandItem
+                  <Row
                     key={i.id}
                     value={`app ${i.name} ${i.category}`}
-                    onSelect={() => go(() => navigate({ to: "/integrations" }))}
-                  >
-                    <Plug className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span className="truncate">{i.name}</span>
-                    <span className="ml-auto text-[10px] text-muted-foreground">{i.connected ? "Connected" : "Not connected"}</span>
-                  </CommandItem>
+                    onSelect={() => go("/integrations")}
+                    icon={<Plug className="h-4 w-4 text-primary" />}
+                    title={i.name}
+                    subtitle={`${i.category} · ${i.connected ? "Connected" : "Not connected"}`}
+                  />
                 ))}
-              </CommandGroup>
-            </>
-          )}
-        </CommandList>
-      </CommandDialog>
+              </CommandPrimitive.Group>
+            </CommandPrimitive.List>
+          </CommandPrimitive>
+        </DialogContent>
+      </Dialog>
     </Ctx.Provider>
+  );
+}
+
+function Row({
+  onSelect, icon, title, subtitle, value,
+}: { onSelect: () => void; icon: ReactNode; title: string; subtitle?: string; value?: string }) {
+  return (
+    <CommandPrimitive.Item
+      value={value ?? title}
+      onSelect={onSelect}
+      className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-sm aria-selected:bg-surface"
+    >
+      <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10">{icon}</div>
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-medium">{title}</div>
+        {subtitle && <div className="truncate text-xs text-muted-foreground">{subtitle}</div>}
+      </div>
+    </CommandPrimitive.Item>
   );
 }
