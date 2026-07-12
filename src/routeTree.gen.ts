@@ -16,6 +16,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppMissionsRouteImport } from './routes/_app.missions'
+import { Route as AppIntegrationsRouteImport } from './routes/_app.integrations'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
 import { Route as AppMissionsMissionIdRouteImport } from './routes/_app.missions.$missionId'
 
@@ -53,6 +54,11 @@ const AppMissionsRoute = AppMissionsRouteImport.update({
   path: '/missions',
   getParentRoute: () => AppRoute,
 } as any)
+const AppIntegrationsRoute = AppIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppHomeRoute = AppHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/home': typeof AppHomeRoute
+  '/integrations': typeof AppIntegrationsRoute
   '/missions': typeof AppMissionsRouteWithChildren
   '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/home': typeof AppHomeRoute
+  '/integrations': typeof AppIntegrationsRoute
   '/missions': typeof AppMissionsRouteWithChildren
   '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_app/home': typeof AppHomeRoute
+  '/_app/integrations': typeof AppIntegrationsRoute
   '/_app/missions': typeof AppMissionsRouteWithChildren
   '/_app/projects': typeof AppProjectsRoute
   '/_app/missions/$missionId': typeof AppMissionsMissionIdRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/home'
+    | '/integrations'
     | '/missions'
     | '/projects'
     | '/missions/$missionId'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/home'
+    | '/integrations'
     | '/missions'
     | '/projects'
     | '/missions/$missionId'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_app/home'
+    | '/_app/integrations'
     | '/_app/missions'
     | '/_app/projects'
     | '/_app/missions/$missionId'
@@ -189,6 +201,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMissionsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/integrations': {
+      id: '/_app/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof AppIntegrationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/home': {
       id: '/_app/home'
       path: '/home'
@@ -220,12 +239,14 @@ const AppMissionsRouteWithChildren = AppMissionsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppHomeRoute: typeof AppHomeRoute
+  AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppMissionsRoute: typeof AppMissionsRouteWithChildren
   AppProjectsRoute: typeof AppProjectsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppHomeRoute: AppHomeRoute,
+  AppIntegrationsRoute: AppIntegrationsRoute,
   AppMissionsRoute: AppMissionsRouteWithChildren,
   AppProjectsRoute: AppProjectsRoute,
 }
