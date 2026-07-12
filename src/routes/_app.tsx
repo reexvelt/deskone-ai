@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNav } from "@/components/top-nav";
+import { CommandPaletteProvider } from "@/components/command-palette";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
