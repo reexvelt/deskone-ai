@@ -16,6 +16,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppMissionsRouteImport } from './routes/_app.missions'
+import { Route as AppKnowledgeRouteImport } from './routes/_app.knowledge'
 import { Route as AppIntegrationsRouteImport } from './routes/_app.integrations'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
 import { Route as AppAiModelsRouteImport } from './routes/_app.ai-models'
@@ -55,6 +56,11 @@ const AppMissionsRoute = AppMissionsRouteImport.update({
   path: '/missions',
   getParentRoute: () => AppRoute,
 } as any)
+const AppKnowledgeRoute = AppKnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppIntegrationsRoute = AppIntegrationsRouteImport.update({
   id: '/integrations',
   path: '/integrations',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/ai-models': typeof AppAiModelsRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
+  '/knowledge': typeof AppKnowledgeRoute
   '/missions': typeof AppMissionsRouteWithChildren
   '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/ai-models': typeof AppAiModelsRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
+  '/knowledge': typeof AppKnowledgeRoute
   '/missions': typeof AppMissionsRouteWithChildren
   '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/_app/ai-models': typeof AppAiModelsRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/integrations': typeof AppIntegrationsRoute
+  '/_app/knowledge': typeof AppKnowledgeRoute
   '/_app/missions': typeof AppMissionsRouteWithChildren
   '/_app/projects': typeof AppProjectsRoute
   '/_app/missions/$missionId': typeof AppMissionsMissionIdRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/ai-models'
     | '/home'
     | '/integrations'
+    | '/knowledge'
     | '/missions'
     | '/projects'
     | '/missions/$missionId'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/ai-models'
     | '/home'
     | '/integrations'
+    | '/knowledge'
     | '/missions'
     | '/projects'
     | '/missions/$missionId'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/_app/ai-models'
     | '/_app/home'
     | '/_app/integrations'
+    | '/_app/knowledge'
     | '/_app/missions'
     | '/_app/projects'
     | '/_app/missions/$missionId'
@@ -213,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMissionsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/knowledge': {
+      id: '/_app/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof AppKnowledgeRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/integrations': {
       id: '/_app/integrations'
       path: '/integrations'
@@ -260,6 +279,7 @@ interface AppRouteChildren {
   AppAiModelsRoute: typeof AppAiModelsRoute
   AppHomeRoute: typeof AppHomeRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
+  AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppMissionsRoute: typeof AppMissionsRouteWithChildren
   AppProjectsRoute: typeof AppProjectsRoute
 }
@@ -268,6 +288,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAiModelsRoute: AppAiModelsRoute,
   AppHomeRoute: AppHomeRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
+  AppKnowledgeRoute: AppKnowledgeRoute,
   AppMissionsRoute: AppMissionsRouteWithChildren,
   AppProjectsRoute: AppProjectsRoute,
 }
