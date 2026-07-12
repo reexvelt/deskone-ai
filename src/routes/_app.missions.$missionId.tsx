@@ -6,16 +6,13 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ExecutionTimeline } from "@/components/execution-timeline";
 import {
-  ArrowLeft,
-  CheckCircle2,
-  Circle,
-  Clock,
-  Cpu,
-  FileText,
-  Loader2,
-  Play,
-  X,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  ArrowLeft, CheckCircle2, Circle, Clock, Cpu, FileText, Loader2, Play, X,
+  MoreHorizontal, RotateCw, Copy, Trash2, DollarSign, Timer,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/missions/$missionId")({
