@@ -19,6 +19,7 @@ import { Route as AppMissionsRouteImport } from './routes/_app.missions'
 import { Route as AppKnowledgeRouteImport } from './routes/_app.knowledge'
 import { Route as AppIntegrationsRouteImport } from './routes/_app.integrations'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
+import { Route as AppCalendarRouteImport } from './routes/_app.calendar'
 import { Route as AppAiModelsRouteImport } from './routes/_app.ai-models'
 import { Route as AppMissionsMissionIdRouteImport } from './routes/_app.missions.$missionId'
 
@@ -71,6 +72,11 @@ const AppHomeRoute = AppHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCalendarRoute = AppCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAiModelsRoute = AppAiModelsRouteImport.update({
   id: '/ai-models',
   path: '/ai-models',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/ai-models': typeof AppAiModelsRoute
+  '/calendar': typeof AppCalendarRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
   '/knowledge': typeof AppKnowledgeRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/ai-models': typeof AppAiModelsRoute
+  '/calendar': typeof AppCalendarRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
   '/knowledge': typeof AppKnowledgeRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_app/ai-models': typeof AppAiModelsRoute
+  '/_app/calendar': typeof AppCalendarRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/integrations': typeof AppIntegrationsRoute
   '/_app/knowledge': typeof AppKnowledgeRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/ai-models'
+    | '/calendar'
     | '/home'
     | '/integrations'
     | '/knowledge'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/ai-models'
+    | '/calendar'
     | '/home'
     | '/integrations'
     | '/knowledge'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_app/ai-models'
+    | '/_app/calendar'
     | '/_app/home'
     | '/_app/integrations'
     | '/_app/knowledge'
@@ -246,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHomeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/calendar': {
+      id: '/_app/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof AppCalendarRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/ai-models': {
       id: '/_app/ai-models'
       path: '/ai-models'
@@ -277,6 +296,7 @@ const AppMissionsRouteWithChildren = AppMissionsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAiModelsRoute: typeof AppAiModelsRoute
+  AppCalendarRoute: typeof AppCalendarRoute
   AppHomeRoute: typeof AppHomeRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
@@ -286,6 +306,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAiModelsRoute: AppAiModelsRoute,
+  AppCalendarRoute: AppCalendarRoute,
   AppHomeRoute: AppHomeRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
