@@ -29,10 +29,13 @@ const titles: Record<string, string> = {
 
 export function TopNav() {
   const { user, logout } = useAuth();
+  const { notifications } = useStore();
+  const { open: openPalette } = useCommandPalette();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const key = Object.keys(titles).find((k) => pathname === k || pathname.startsWith(k + "/")) ?? "/home";
   const title = titles[key];
+  const unread = notifications.filter((n) => !n.read && !n.archived).length;
   const initials = (user?.name ?? "U")
     .split(" ")
     .map((p) => p[0])
@@ -48,23 +51,33 @@ export function TopNav() {
       </div>
 
       <div className="hidden max-w-md flex-1 md:block">
-        <div className="group flex items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-2 text-sm text-muted-foreground transition focus-within:border-primary/40">
+        <button
+          onClick={openPalette}
+          className="group flex w-full items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-2 text-left text-sm text-muted-foreground transition hover:border-primary/40 hover:bg-surface"
+        >
           <Search className="h-4 w-4" />
-          <input
-            placeholder="Search missions, projects, apps…"
-            className="w-full bg-transparent outline-none placeholder:text-muted-foreground"
-          />
+          <span className="flex-1 truncate">Search missions, projects, apps…</span>
           <span className="hidden items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground lg:flex">
             <Command className="h-3 w-3" /> K
           </span>
-        </div>
+        </button>
       </div>
 
-      <Link to="/notifications">
+      <Button variant="ghost" size="icon" className="rounded-full md:hidden" onClick={openPalette}>
+        <Search className="h-5 w-5" />
+      </Button>
+
+      <Link to="/notifications" className="relative">
         <Button variant="ghost" size="icon" className="rounded-full">
           <Bell className="h-5 w-5" />
         </Button>
+        {unread > 0 && (
+          <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+            {unread}
+          </span>
+        )}
       </Link>
+
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
