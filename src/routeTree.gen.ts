@@ -18,6 +18,7 @@ import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppMissionsRouteImport } from './routes/_app.missions'
 import { Route as AppIntegrationsRouteImport } from './routes/_app.integrations'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
+import { Route as AppAiModelsRouteImport } from './routes/_app.ai-models'
 import { Route as AppMissionsMissionIdRouteImport } from './routes/_app.missions.$missionId'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -64,6 +65,11 @@ const AppHomeRoute = AppHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAiModelsRoute = AppAiModelsRouteImport.update({
+  id: '/ai-models',
+  path: '/ai-models',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMissionsMissionIdRoute = AppMissionsMissionIdRouteImport.update({
   id: '/$missionId',
   path: '/$missionId',
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/ai-models': typeof AppAiModelsRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
   '/missions': typeof AppMissionsRouteWithChildren
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/ai-models': typeof AppAiModelsRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
   '/missions': typeof AppMissionsRouteWithChildren
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/_app/ai-models': typeof AppAiModelsRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/integrations': typeof AppIntegrationsRoute
   '/_app/missions': typeof AppMissionsRouteWithChildren
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/register'
+    | '/ai-models'
     | '/home'
     | '/integrations'
     | '/missions'
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/register'
+    | '/ai-models'
     | '/home'
     | '/integrations'
     | '/missions'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/register'
+    | '/_app/ai-models'
     | '/_app/home'
     | '/_app/integrations'
     | '/_app/missions'
@@ -215,6 +227,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHomeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/ai-models': {
+      id: '/_app/ai-models'
+      path: '/ai-models'
+      fullPath: '/ai-models'
+      preLoaderRoute: typeof AppAiModelsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/missions/$missionId': {
       id: '/_app/missions/$missionId'
       path: '/$missionId'
@@ -238,6 +257,7 @@ const AppMissionsRouteWithChildren = AppMissionsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAiModelsRoute: typeof AppAiModelsRoute
   AppHomeRoute: typeof AppHomeRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppMissionsRoute: typeof AppMissionsRouteWithChildren
@@ -245,6 +265,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAiModelsRoute: AppAiModelsRoute,
   AppHomeRoute: AppHomeRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
   AppMissionsRoute: AppMissionsRouteWithChildren,
