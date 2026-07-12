@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppMissionsRouteImport } from './routes/_app.missions'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
 import { Route as AppMissionsMissionIdRouteImport } from './routes/_app.missions.$missionId'
@@ -42,6 +43,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProjectsRoute = AppProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMissionsRoute = AppMissionsRouteImport.update({
   id: '/missions',
   path: '/missions',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/home': typeof AppHomeRoute
   '/missions': typeof AppMissionsRouteWithChildren
+  '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
 }
 export interface FileRoutesByTo {
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/home': typeof AppHomeRoute
   '/missions': typeof AppMissionsRouteWithChildren
+  '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
 }
 export interface FileRoutesById {
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/missions': typeof AppMissionsRouteWithChildren
+  '/_app/projects': typeof AppProjectsRoute
   '/_app/missions/$missionId': typeof AppMissionsMissionIdRoute
 }
 export interface FileRouteTypes {
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/home'
     | '/missions'
+    | '/projects'
     | '/missions/$missionId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/home'
     | '/missions'
+    | '/projects'
     | '/missions/$missionId'
   id:
     | '__root__'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/_app/home'
     | '/_app/missions'
+    | '/_app/projects'
     | '/_app/missions/$missionId'
   fileRoutesById: FileRoutesById
 }
@@ -163,6 +175,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/projects': {
+      id: '/_app/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof AppProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/missions': {
       id: '/_app/missions'
       path: '/missions'
@@ -202,11 +221,13 @@ const AppMissionsRouteWithChildren = AppMissionsRoute._addFileChildren(
 interface AppRouteChildren {
   AppHomeRoute: typeof AppHomeRoute
   AppMissionsRoute: typeof AppMissionsRouteWithChildren
+  AppProjectsRoute: typeof AppProjectsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppHomeRoute: AppHomeRoute,
   AppMissionsRoute: AppMissionsRouteWithChildren,
+  AppProjectsRoute: AppProjectsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
