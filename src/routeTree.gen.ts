@@ -15,6 +15,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppProjectsRouteImport } from './routes/_app.projects'
+import { Route as AppNotificationsRouteImport } from './routes/_app.notifications'
 import { Route as AppMissionsRouteImport } from './routes/_app.missions'
 import { Route as AppKnowledgeRouteImport } from './routes/_app.knowledge'
 import { Route as AppIntegrationsRouteImport } from './routes/_app.integrations'
@@ -50,6 +51,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppProjectsRoute = AppProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMissionsRoute = AppMissionsRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/integrations': typeof AppIntegrationsRoute
   '/knowledge': typeof AppKnowledgeRoute
   '/missions': typeof AppMissionsRouteWithChildren
+  '/notifications': typeof AppNotificationsRoute
   '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
 }
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/integrations': typeof AppIntegrationsRoute
   '/knowledge': typeof AppKnowledgeRoute
   '/missions': typeof AppMissionsRouteWithChildren
+  '/notifications': typeof AppNotificationsRoute
   '/projects': typeof AppProjectsRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
 }
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/_app/integrations': typeof AppIntegrationsRoute
   '/_app/knowledge': typeof AppKnowledgeRoute
   '/_app/missions': typeof AppMissionsRouteWithChildren
+  '/_app/notifications': typeof AppNotificationsRoute
   '/_app/projects': typeof AppProjectsRoute
   '/_app/missions/$missionId': typeof AppMissionsMissionIdRoute
 }
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/integrations'
     | '/knowledge'
     | '/missions'
+    | '/notifications'
     | '/projects'
     | '/missions/$missionId'
   fileRoutesByTo: FileRoutesByTo
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/integrations'
     | '/knowledge'
     | '/missions'
+    | '/notifications'
     | '/projects'
     | '/missions/$missionId'
   id:
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/_app/integrations'
     | '/_app/knowledge'
     | '/_app/missions'
+    | '/_app/notifications'
     | '/_app/projects'
     | '/_app/missions/$missionId'
   fileRoutesById: FileRoutesById
@@ -228,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof AppProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/notifications': {
+      id: '/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/missions': {
@@ -301,6 +320,7 @@ interface AppRouteChildren {
   AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
   AppMissionsRoute: typeof AppMissionsRouteWithChildren
+  AppNotificationsRoute: typeof AppNotificationsRoute
   AppProjectsRoute: typeof AppProjectsRoute
 }
 
@@ -311,6 +331,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppIntegrationsRoute: AppIntegrationsRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
   AppMissionsRoute: AppMissionsRouteWithChildren,
+  AppNotificationsRoute: AppNotificationsRoute,
   AppProjectsRoute: AppProjectsRoute,
 }
 
