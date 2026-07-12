@@ -181,16 +181,9 @@ function MissionDetail() {
         </TabsContent>
 
         <TabsContent value="timeline" className="mt-6">
-          <div className="relative space-y-6 border-l border-border pl-6">
-            {mission.steps.map((s, i) => (
-              <div key={s.id} className="relative">
-                <span className={`absolute -left-[29px] top-1 grid h-4 w-4 place-items-center rounded-full border border-border ${s.status === "done" ? "bg-success" : s.status === "running" ? "bg-primary" : "bg-surface"}`} />
-                <div className="text-xs text-muted-foreground">Step {i + 1} · {s.app ?? "AI"}</div>
-                <div className="text-sm font-medium">{s.title}</div>
-              </div>
-            ))}
-          </div>
+          <ExecutionTimeline mission={mission} />
         </TabsContent>
+
 
         <TabsContent value="outputs" className="mt-6">
           {mission.outputs.length === 0 ? (
