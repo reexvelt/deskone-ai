@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNav } from "@/components/top-nav";
+import { CommandPaletteProvider } from "@/components/command-palette";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
@@ -26,14 +27,17 @@ function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <AppSidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <TopNav />
-        <main className="flex-1 overflow-x-hidden">
-          <Outlet />
-        </main>
+    <CommandPaletteProvider>
+      <div className="flex min-h-screen bg-background">
+        <AppSidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <TopNav />
+          <main className="flex-1 overflow-x-hidden">
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+    </CommandPaletteProvider>
   );
 }
+

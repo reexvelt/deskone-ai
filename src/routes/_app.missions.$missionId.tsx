@@ -6,16 +6,13 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ExecutionTimeline } from "@/components/execution-timeline";
 import {
-  ArrowLeft,
-  CheckCircle2,
-  Circle,
-  Clock,
-  Cpu,
-  FileText,
-  Loader2,
-  Play,
-  X,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  ArrowLeft, CheckCircle2, Circle, Clock, Cpu, FileText, Loader2, Play, X,
+  MoreHorizontal, RotateCw, Copy, Trash2, DollarSign, Timer,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/missions/$missionId")({
@@ -24,7 +21,7 @@ export const Route = createFileRoute("/_app/missions/$missionId")({
 
 function MissionDetail() {
   const { missionId } = Route.useParams();
-  const { missions, approveMission, cancelMission } = useStore();
+  const { missions, approveMission, cancelMission, retryMission, duplicateMission, deleteMission } = useStore();
   const navigate = useNavigate();
   const mission = missions.find((m) => m.id === missionId);
 
@@ -40,6 +37,16 @@ function MissionDetail() {
   }
 
   const awaiting = mission.status === "awaiting_approval";
+  const durationMs = mission.completedAt && mission.startedAt
+    ? mission.completedAt - mission.startedAt
+    : mission.startedAt
+      ? Date.now() - mission.startedAt
+      : 0;
+  const durationLabel = durationMs > 0
+    ? durationMs < 60000
+      ? `${Math.round(durationMs / 1000)}s`
+      : `${Math.round(durationMs / 60000)}m`
+    : "—";
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
@@ -53,26 +60,20 @@ function MissionDetail() {
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-gradient sm:text-4xl">{mission.title}</h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{mission.objective}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <StatusBadge status={mission.status} />
           {awaiting ? (
             <>
               <Button
                 variant="ghost"
                 className="rounded-full"
-                onClick={() => {
-                  cancelMission(mission.id);
-                  toast("Mission cancelled");
-                }}
+                onClick={() => { cancelMission(mission.id); toast("Mission cancelled"); }}
               >
                 <X className="mr-1 h-4 w-4" /> Cancel
               </Button>
               <Button
                 className="rounded-full glow-primary"
-                onClick={() => {
-                  approveMission(mission.id);
-                  toast.success("Mission approved. Execution started.");
-                }}
+                onClick={() => { approveMission(mission.id); toast.success("Mission approved. Execution started."); }}
               >
                 <Play className="mr-1 h-4 w-4" /> Approve & execute
               </Button>
@@ -82,14 +83,41 @@ function MissionDetail() {
               <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Running
             </Button>
           ) : null}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full"><MoreHorizontal className="h-5 w-5" /></Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 border-border bg-card">
+              <DropdownMenuItem
+                onClick={() => { retryMission(mission.id); toast.success("Mission retried"); }}
+                disabled={mission.status === "running" || mission.status === "awaiting_approval"}
+              >
+                <RotateCw className="mr-2 h-4 w-4" /> Retry mission
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                const copy = duplicateMission(mission.id);
+                if (copy) { toast.success("Duplicated"); navigate({ to: "/missions/$missionId", params: { missionId: copy.id } }); }
+              }}>
+                <Copy className="mr-2 h-4 w-4" /> Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => { deleteMission(mission.id); toast("Mission deleted"); navigate({ to: "/missions" }); }}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-5">
         <MetaCard icon={Clock} label="Estimated" value={`${mission.estimatedMinutes} min`} />
+        <MetaCard icon={Timer} label="Duration" value={durationLabel} />
         <MetaCard icon={Cpu} label="Apps" value={`${mission.apps.length}`} />
-        <MetaCard icon={CheckCircle2} label="Steps" value={`${mission.steps.length}`} />
         <MetaCard icon={FileText} label="Files" value={`${mission.files.length}`} />
+        <MetaCard icon={DollarSign} label="Cost" value={`$${(mission.cost ?? 0).toFixed(2)}`} />
       </div>
 
       <div className="mt-6">
@@ -153,16 +181,9 @@ function MissionDetail() {
         </TabsContent>
 
         <TabsContent value="timeline" className="mt-6">
-          <div className="relative space-y-6 border-l border-border pl-6">
-            {mission.steps.map((s, i) => (
-              <div key={s.id} className="relative">
-                <span className={`absolute -left-[29px] top-1 grid h-4 w-4 place-items-center rounded-full border border-border ${s.status === "done" ? "bg-success" : s.status === "running" ? "bg-primary" : "bg-surface"}`} />
-                <div className="text-xs text-muted-foreground">Step {i + 1} · {s.app ?? "AI"}</div>
-                <div className="text-sm font-medium">{s.title}</div>
-              </div>
-            ))}
-          </div>
+          <ExecutionTimeline mission={mission} />
         </TabsContent>
+
 
         <TabsContent value="outputs" className="mt-6">
           {mission.outputs.length === 0 ? (
