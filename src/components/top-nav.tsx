@@ -1,6 +1,8 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Bell, Search, Command, LogOut, User as UserIcon, Settings as SettingsIcon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useStore } from "@/lib/store";
+import { useCommandPalette } from "@/components/command-palette";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
