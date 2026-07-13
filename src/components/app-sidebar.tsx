@@ -12,8 +12,9 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  KeyRound,
+  Building2,
 } from "lucide-react";
-import { useState } from "react";
 import { Logo } from "@/components/auth-shell";
 import { cn } from "@/lib/utils";
 
@@ -23,9 +24,11 @@ const items = [
   { to: "/projects", label: "Projects", icon: FolderKanban },
   { to: "/integrations", label: "Integrations", icon: Plug },
   { to: "/ai-models", label: "AI Models", icon: Sparkles },
+  { to: "/api-keys", label: "API Keys", icon: KeyRound },
   { to: "/knowledge", label: "Knowledge", icon: BookOpen },
   { to: "/calendar", label: "Calendar", icon: Calendar },
   { to: "/notifications", label: "Notifications", icon: Bell },
+  { to: "/workspace", label: "Workspace", icon: Building2 },
   { to: "/profile", label: "Profile", icon: User },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
