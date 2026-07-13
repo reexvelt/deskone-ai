@@ -522,7 +522,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             return {
               ...m,
               steps,
-              logs: [...m.logs, { ts: Date.now(), level: "info", message: `Starting: ${steps[idx].title}` }],
+              logs: [...m.logs, { ts: Date.now(), level: "info" as const, message: `Starting: ${steps[idx].title}` }],
             };
           }
 
