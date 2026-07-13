@@ -609,8 +609,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           apps: plan.apps,
           steps: plan.steps,
           logs: [
-            { ts: Date.now(), level: "info", message: "Understanding request." },
-            { ts: Date.now() + 1, level: "info", message: "Execution plan generated. Awaiting approval." },
+            { ts: Date.now(), level: "info" as const, message: "Understanding request." },
+            { ts: Date.now() + 1, level: "info" as const, message: "Execution plan generated. Awaiting approval." },
           ],
           outputs: [],
           files: [],
