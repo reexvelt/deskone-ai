@@ -25,24 +25,42 @@ function IntegrationsPage() {
           <div className="mb-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">{cat}</div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {integrations.filter((i) => i.category === cat).map((i) => (
-              <Card key={i.id} className="flex items-start gap-4 border-border bg-card p-5">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
-                  {i.name[0]}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <div className="truncate text-sm font-semibold">{i.name}</div>
-                    {i.connected && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[10px] text-success">
-                        <Check className="h-3 w-3" /> Connected
-                      </span>
-                    )}
+              <Card key={i.id} className="flex flex-col gap-3 border-border bg-card p-5">
+                <div className="flex items-start gap-4">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
+                    {i.name[0]}
                   </div>
-                  <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{i.description}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <div className="truncate text-sm font-semibold">{i.name}</div>
+                      {i.connected && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[10px] text-success">
+                          <Check className="h-3 w-3" /> Connected
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{i.description}</div>
+                  </div>
+                </div>
+                {i.permissions?.length ? (
+                  <div className="flex flex-wrap gap-1">
+                    {i.permissions.map((p) => (
+                      <span key={p} className="rounded-full border border-border bg-surface px-2 py-0.5 text-[10px] font-mono text-muted-foreground">
+                        {p}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+                <div className="mt-auto flex items-center justify-between">
+                  <div className="text-[11px] text-muted-foreground">
+                    {i.connected && i.lastSync
+                      ? `Last sync ${new Date(i.lastSync).toLocaleString()}`
+                      : "Not connected"}
+                  </div>
                   <Button
                     variant={i.connected ? "outline" : "default"}
                     size="sm"
-                    className={`mt-3 h-8 rounded-full ${i.connected ? "border-border bg-surface" : ""}`}
+                    className={`h-8 rounded-full ${i.connected ? "border-border bg-surface" : ""}`}
                     onClick={() => {
                       toggleIntegration(i.id);
                       toast.success(i.connected ? `${i.name} disconnected` : `${i.name} connected`);

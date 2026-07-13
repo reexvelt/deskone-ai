@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppWorkspaceRouteImport } from './routes/_app.workspace'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppProfileRouteImport } from './routes/_app.profile'
@@ -23,6 +24,7 @@ import { Route as AppKnowledgeRouteImport } from './routes/_app.knowledge'
 import { Route as AppIntegrationsRouteImport } from './routes/_app.integrations'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
 import { Route as AppCalendarRouteImport } from './routes/_app.calendar'
+import { Route as AppApiKeysRouteImport } from './routes/_app.api-keys'
 import { Route as AppAiModelsRouteImport } from './routes/_app.ai-models'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app.projects.$projectId'
 import { Route as AppMissionsMissionIdRouteImport } from './routes/_app.missions.$missionId'
@@ -50,6 +52,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppWorkspaceRoute = AppWorkspaceRouteImport.update({
+  id: '/workspace',
+  path: '/workspace',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
@@ -96,6 +103,11 @@ const AppCalendarRoute = AppCalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => AppRoute,
 } as any)
+const AppApiKeysRoute = AppApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAiModelsRoute = AppAiModelsRouteImport.update({
   id: '/ai-models',
   path: '/ai-models',
@@ -118,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/ai-models': typeof AppAiModelsRoute
+  '/api-keys': typeof AppApiKeysRoute
   '/calendar': typeof AppCalendarRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
@@ -127,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRouteWithChildren
   '/settings': typeof AppSettingsRoute
+  '/workspace': typeof AppWorkspaceRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
@@ -136,6 +150,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/ai-models': typeof AppAiModelsRoute
+  '/api-keys': typeof AppApiKeysRoute
   '/calendar': typeof AppCalendarRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
@@ -145,6 +160,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRouteWithChildren
   '/settings': typeof AppSettingsRoute
+  '/workspace': typeof AppWorkspaceRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
@@ -156,6 +172,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_app/ai-models': typeof AppAiModelsRoute
+  '/_app/api-keys': typeof AppApiKeysRoute
   '/_app/calendar': typeof AppCalendarRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/integrations': typeof AppIntegrationsRoute
@@ -165,6 +182,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/projects': typeof AppProjectsRouteWithChildren
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/workspace': typeof AppWorkspaceRoute
   '/_app/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
@@ -176,6 +194,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/ai-models'
+    | '/api-keys'
     | '/calendar'
     | '/home'
     | '/integrations'
@@ -185,6 +204,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/settings'
+    | '/workspace'
     | '/missions/$missionId'
     | '/projects/$projectId'
   fileRoutesByTo: FileRoutesByTo
@@ -194,6 +214,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/ai-models'
+    | '/api-keys'
     | '/calendar'
     | '/home'
     | '/integrations'
@@ -203,6 +224,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/settings'
+    | '/workspace'
     | '/missions/$missionId'
     | '/projects/$projectId'
   id:
@@ -213,6 +235,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_app/ai-models'
+    | '/_app/api-keys'
     | '/_app/calendar'
     | '/_app/home'
     | '/_app/integrations'
@@ -222,6 +245,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/projects'
     | '/_app/settings'
+    | '/_app/workspace'
     | '/_app/missions/$missionId'
     | '/_app/projects/$projectId'
   fileRoutesById: FileRoutesById
@@ -270,6 +294,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/workspace': {
+      id: '/_app/workspace'
+      path: '/workspace'
+      fullPath: '/workspace'
+      preLoaderRoute: typeof AppWorkspaceRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/settings': {
       id: '/_app/settings'
@@ -334,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCalendarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/api-keys': {
+      id: '/_app/api-keys'
+      path: '/api-keys'
+      fullPath: '/api-keys'
+      preLoaderRoute: typeof AppApiKeysRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/ai-models': {
       id: '/_app/ai-models'
       path: '/ai-models'
@@ -384,6 +422,7 @@ const AppProjectsRouteWithChildren = AppProjectsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAiModelsRoute: typeof AppAiModelsRoute
+  AppApiKeysRoute: typeof AppApiKeysRoute
   AppCalendarRoute: typeof AppCalendarRoute
   AppHomeRoute: typeof AppHomeRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
@@ -393,10 +432,12 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppProjectsRoute: typeof AppProjectsRouteWithChildren
   AppSettingsRoute: typeof AppSettingsRoute
+  AppWorkspaceRoute: typeof AppWorkspaceRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAiModelsRoute: AppAiModelsRoute,
+  AppApiKeysRoute: AppApiKeysRoute,
   AppCalendarRoute: AppCalendarRoute,
   AppHomeRoute: AppHomeRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
@@ -406,6 +447,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppProjectsRoute: AppProjectsRouteWithChildren,
   AppSettingsRoute: AppSettingsRoute,
+  AppWorkspaceRoute: AppWorkspaceRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
