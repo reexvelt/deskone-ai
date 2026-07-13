@@ -1,8 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 export type MissionStatus = "planning" | "awaiting_approval" | "running" | "completed" | "cancelled" | "failed";
 export type ProjectStatus = "active" | "paused" | "archived" | "completed";
 export type NotificationCategory = "mission_completed" | "mission_failed" | "approval_required" | "integration_error" | "system_update";
+export type ProviderId = "openai" | "gemini" | "claude" | "openrouter";
 
 export interface ExecutionStep {
   id: string;
@@ -74,6 +75,8 @@ export interface Integration {
   category: string;
   connected: boolean;
   description: string;
+  permissions?: string[];
+  lastSync?: number;
 }
 
 export interface AIModelInfo {
@@ -83,6 +86,28 @@ export interface AIModelInfo {
   description: string;
   enabled: boolean;
   tag: "reasoning" | "fast" | "creative" | "vision";
+}
+
+export interface AIProvider {
+  id: ProviderId;
+  name: string;
+  description: string;
+  defaultModel: string;
+  enabled: boolean;
+  isDefault: boolean;
+  apiKeyId?: string;
+  status: "connected" | "disconnected" | "error";
+  lastTestedAt?: number;
+}
+
+export interface ApiKey {
+  id: string;
+  providerId: ProviderId;
+  label: string;
+  maskedKey: string;
+  createdAt: number;
+  lastTestedAt?: number;
+  status: "valid" | "invalid" | "untested";
 }
 
 export interface NotificationItem {
@@ -115,14 +140,32 @@ export interface CalendarEvent {
   color: string;
 }
 
+export interface WorkspaceMemory {
+  workspaceName: string;
+  brandName: string;
+  brandColors: string[];
+  writingTone: string;
+  preferredModel: string;
+  favoriteTemplates: string[];
+  workingHoursStart: string;
+  workingHoursEnd: string;
+  timeZone: string;
+  language: string;
+  socialAccounts: { platform: string; handle: string }[];
+  businessInfo: string;
+}
+
 interface StoreState {
   missions: Mission[];
   projects: Project[];
   integrations: Integration[];
   models: AIModelInfo[];
+  providers: AIProvider[];
+  apiKeys: ApiKey[];
   notifications: NotificationItem[];
   knowledge: KnowledgeFile[];
   events: CalendarEvent[];
+  workspace: WorkspaceMemory;
   credits: { used: number; total: number };
   createMissionDraft: (title: string, projectId?: string) => Mission;
   approveMission: (id: string) => void;
@@ -136,6 +179,13 @@ interface StoreState {
   deleteProject: (id: string) => void;
   toggleIntegration: (id: string) => void;
   toggleModel: (id: string) => void;
+  updateProvider: (id: ProviderId, patch: Partial<AIProvider>) => void;
+  setDefaultProvider: (id: ProviderId) => void;
+  testProvider: (id: ProviderId) => Promise<boolean>;
+  addApiKey: (input: { providerId: ProviderId; label: string; rawKey: string }) => ApiKey;
+  removeApiKey: (id: string) => void;
+  testApiKey: (id: string) => Promise<boolean>;
+  updateWorkspace: (patch: Partial<WorkspaceMemory>) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   archiveNotification: (id: string) => void;
@@ -158,7 +208,7 @@ const COVERS = [
 
 export const PROJECT_COVERS = COVERS;
 
-function planFor(title: string): { objective: string; steps: ExecutionStep[]; apps: string[]; minutes: number } {
+function planFor(title: string, workspace?: WorkspaceMemory): { objective: string; steps: ExecutionStep[]; apps: string[]; minutes: number } {
   const t = title.toLowerCase();
   const pick = (arr: string[], n: number) => arr.slice(0, n);
   let apps: string[] = ["Notion", "Google Drive"];
@@ -229,8 +279,9 @@ function planFor(title: string): { objective: string; steps: ExecutionStep[]; ap
     ];
   }
 
+  const brand = workspace?.brandName ? ` for ${workspace.brandName}` : "";
   return {
-    objective: `Autonomously ${title.trim().replace(/\.$/, "")} using connected apps, with human approval at key checkpoints.`,
+    objective: `Autonomously ${title.trim().replace(/\.$/, "")}${brand} using connected apps, with human approval at key checkpoints.`,
     apps,
     minutes,
     steps: steps.map((s) => ({ ...s, id: crypto.randomUUID(), status: "pending" })),
@@ -265,16 +316,30 @@ const seedProjects = (): Project[] => [
 ];
 
 const seedIntegrations = (): Integration[] => [
-  { id: "gmail", name: "Gmail", category: "Communication", connected: true, description: "Send and manage email." },
-  { id: "gdrive", name: "Google Drive", category: "Storage", connected: true, description: "Read and write files." },
-  { id: "notion", name: "Notion", category: "Productivity", connected: true, description: "Docs and databases." },
-  { id: "youtube", name: "YouTube", category: "Media", connected: false, description: "Upload and manage videos." },
-  { id: "slack", name: "Slack", category: "Communication", connected: false, description: "Post and read messages." },
-  { id: "figma", name: "Figma", category: "Design", connected: false, description: "Frames and assets." },
-  { id: "github", name: "GitHub", category: "Engineering", connected: true, description: "Repos, PRs, issues." },
-  { id: "linear", name: "Linear", category: "Engineering", connected: false, description: "Issues and cycles." },
-  { id: "stripe", name: "Stripe", category: "Payments", connected: false, description: "Products and checkout." },
-  { id: "x", name: "X", category: "Social", connected: false, description: "Post and schedule." },
+  { id: "openai", name: "OpenAI", category: "AI", connected: true, description: "GPT reasoning models.", permissions: ["chat.completions", "embeddings"], lastSync: Date.now() - 3600000 },
+  { id: "gemini", name: "Google Gemini", category: "AI", connected: false, description: "Multimodal Gemini models.", permissions: ["generate", "embed"] },
+  { id: "claude", name: "Anthropic Claude", category: "AI", connected: false, description: "Long-context reasoning.", permissions: ["messages"] },
+  { id: "elevenlabs", name: "ElevenLabs", category: "AI", connected: false, description: "Text-to-speech voices.", permissions: ["voices", "generate"] },
+
+  { id: "gdrive", name: "Google Drive", category: "Storage", connected: true, description: "Read and write files.", permissions: ["drive.file", "drive.metadata"], lastSync: Date.now() - 86400000 },
+  { id: "gdocs", name: "Google Docs", category: "Storage", connected: true, description: "Create and edit documents.", permissions: ["docs.readwrite"], lastSync: Date.now() - 3600000 * 6 },
+  { id: "gsheets", name: "Google Sheets", category: "Storage", connected: false, description: "Structured data workflows.", permissions: ["sheets.readwrite"] },
+  { id: "notion", name: "Notion", category: "Storage", connected: true, description: "Docs and databases.", permissions: ["read_content", "update_content"], lastSync: Date.now() - 3600000 * 2 },
+
+  { id: "gmail", name: "Gmail", category: "Communication", connected: true, description: "Send and manage email.", permissions: ["gmail.send", "gmail.compose"], lastSync: Date.now() - 3600000 * 3 },
+  { id: "slack", name: "Slack", category: "Communication", connected: false, description: "Post and read messages.", permissions: ["chat:write", "channels:read"] },
+  { id: "discord", name: "Discord", category: "Communication", connected: false, description: "Server automations.", permissions: ["messages.send"] },
+
+  { id: "youtube", name: "YouTube", category: "Content", connected: false, description: "Upload and manage videos.", permissions: ["youtube.upload"] },
+  { id: "figma", name: "Figma", category: "Content", connected: false, description: "Frames and assets.", permissions: ["files:read"] },
+  { id: "gcal", name: "Google Calendar", category: "Content", connected: true, description: "Schedule and reminders.", permissions: ["calendar.events"], lastSync: Date.now() - 3600000 },
+
+  { id: "linkedin", name: "LinkedIn", category: "Publishing", connected: false, description: "Publish posts and articles.", permissions: ["w_member_social"] },
+  { id: "x", name: "X", category: "Publishing", connected: false, description: "Post and schedule.", permissions: ["tweet.write"] },
+
+  { id: "github", name: "GitHub", category: "Productivity", connected: true, description: "Repos, PRs, issues.", permissions: ["repo", "workflow"], lastSync: Date.now() - 3600000 * 4 },
+  { id: "linear", name: "Linear", category: "Productivity", connected: false, description: "Issues and cycles.", permissions: ["issues.write"] },
+  { id: "stripe", name: "Stripe", category: "Productivity", connected: false, description: "Products and checkout.", permissions: ["products.write"] },
 ];
 
 const seedModels = (): AIModelInfo[] => [
@@ -284,6 +349,31 @@ const seedModels = (): AIModelInfo[] => [
   { id: "muse", name: "Muse", provider: "DeskOne", description: "Creative writing and copy.", enabled: false, tag: "creative" },
   { id: "lens", name: "Lens", provider: "DeskOne", description: "Vision and screenshots.", enabled: false, tag: "vision" },
 ];
+
+const seedProviders = (): AIProvider[] => [
+  { id: "openai", name: "OpenAI", description: "GPT-class reasoning and multimodal models.", defaultModel: "gpt-5", enabled: true, isDefault: true, status: "connected", lastTestedAt: Date.now() - 3600000 },
+  { id: "gemini", name: "Google Gemini", description: "Multimodal Gemini 2.5 family.", defaultModel: "gemini-2.5-pro", enabled: false, isDefault: false, status: "disconnected" },
+  { id: "claude", name: "Anthropic Claude", description: "Long-context reasoning and writing.", defaultModel: "claude-sonnet-4", enabled: false, isDefault: false, status: "disconnected" },
+  { id: "openrouter", name: "OpenRouter", description: "Unified router across many providers.", defaultModel: "auto", enabled: false, isDefault: false, status: "disconnected" },
+];
+
+const seedWorkspace = (): WorkspaceMemory => ({
+  workspaceName: "DeskOne HQ",
+  brandName: "DeskOne",
+  brandColors: ["#3B82F6", "#7C5CFF", "#090B10"],
+  writingTone: "Confident, minimal, premium. Short sentences.",
+  preferredModel: "Orion Pro",
+  favoriteTemplates: ["Launch email", "Weekly newsletter", "YouTube script"],
+  workingHoursStart: "09:00",
+  workingHoursEnd: "18:00",
+  timeZone: "Europe/Lisbon",
+  language: "English",
+  socialAccounts: [
+    { platform: "X", handle: "@deskone" },
+    { platform: "LinkedIn", handle: "deskone" },
+  ],
+  businessInfo: "AI Execution Platform. Turns goals into completed work using connected apps.",
+});
 
 const seedMissions = (): Mission[] => {
   const m1 = planFor("Launch my ebook");
@@ -353,16 +443,25 @@ const seedEvents = (): CalendarEvent[] => {
   ];
 };
 
-const KEY = "deskone.store.v2";
+const KEY = "deskone.store.v3";
+
+function maskKey(raw: string) {
+  const trimmed = raw.trim();
+  if (trimmed.length <= 8) return "•".repeat(Math.max(trimmed.length, 4));
+  return `${trimmed.slice(0, 3)}${"•".repeat(Math.max(trimmed.length - 7, 6))}${trimmed.slice(-4)}`;
+}
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [missions, setMissions] = useState<Mission[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [models, setModels] = useState<AIModelInfo[]>([]);
+  const [providers, setProviders] = useState<AIProvider[]>([]);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [knowledge, setKnowledge] = useState<KnowledgeFile[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [workspace, setWorkspace] = useState<WorkspaceMemory>(seedWorkspace());
   const [credits] = useState({ used: 4210, total: 10000 });
 
   useEffect(() => {
@@ -374,9 +473,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setProjects(data.projects ?? seedProjects());
         setIntegrations(data.integrations ?? seedIntegrations());
         setModels(data.models ?? seedModels());
+        setProviders(data.providers ?? seedProviders());
+        setApiKeys(data.apiKeys ?? []);
         setNotifications(data.notifications ?? seedNotifications());
         setKnowledge(data.knowledge ?? seedKnowledge());
         setEvents(data.events ?? seedEvents());
+        setWorkspace(data.workspace ?? seedWorkspace());
         return;
       }
     } catch {}
@@ -384,21 +486,118 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setProjects(seedProjects());
     setIntegrations(seedIntegrations());
     setModels(seedModels());
+    setProviders(seedProviders());
+    setApiKeys([]);
     setNotifications(seedNotifications());
     setKnowledge(seedKnowledge());
     setEvents(seedEvents());
+    setWorkspace(seedWorkspace());
   }, []);
 
   useEffect(() => {
     if (!missions.length && !projects.length) return;
-    localStorage.setItem(KEY, JSON.stringify({ missions, projects, integrations, models, notifications, knowledge, events }));
-  }, [missions, projects, integrations, models, notifications, knowledge, events]);
+    localStorage.setItem(KEY, JSON.stringify({ missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace }));
+  }, [missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace]);
+
+  // === Mission Execution Engine ===
+  // Advances running missions step-by-step in near-real-time, producing outputs,
+  // files, logs, and a completion notification.
+  const engineRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (engineRef.current) window.clearInterval(engineRef.current);
+    engineRef.current = window.setInterval(() => {
+      setMissions((ms) => {
+        let changed = false;
+        const next = ms.map((m) => {
+          if (m.status !== "running") return m;
+          const steps = [...m.steps];
+          const runningIdx = steps.findIndex((s) => s.status === "running");
+          const idx = runningIdx === -1 ? steps.findIndex((s) => s.status === "pending") : runningIdx;
+          if (idx === -1) return m;
+
+          // Promote pending -> running
+          if (steps[idx].status === "pending") {
+            steps[idx] = { ...steps[idx], status: "running" };
+            changed = true;
+            return {
+              ...m,
+              steps,
+              logs: [...m.logs, { ts: Date.now(), level: "info", message: `Starting: ${steps[idx].title}` }],
+            };
+          }
+
+          // Complete current running step
+          const completed: ExecutionStep = { ...steps[idx], status: "done", completedAt: Date.now() };
+          steps[idx] = completed;
+          const doneCount = steps.filter((s) => s.status === "done").length;
+          const progress = Math.round((doneCount / steps.length) * 100);
+          const newOutputs = [...m.outputs, completed.title];
+          const newFiles: MissionFile[] = [
+            ...m.files,
+            {
+              id: crypto.randomUUID(),
+              name: `${completed.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40)}.md`,
+              size: `${8 + Math.floor(Math.random() * 40)} KB`,
+              kind: "doc",
+            },
+          ];
+          const cost = Number(((m.cost ?? 0) + 0.12 + Math.random() * 0.18).toFixed(2));
+          const logs = [...m.logs, { ts: Date.now(), level: "success" as const, message: `${completed.title} — done` }];
+
+          const allDone = doneCount === steps.length;
+          changed = true;
+          if (allDone) {
+            return {
+              ...m,
+              steps,
+              progress: 100,
+              status: "completed" as MissionStatus,
+              completedAt: Date.now(),
+              outputs: newOutputs,
+              files: newFiles,
+              cost,
+              logs: [...logs, { ts: Date.now(), level: "success" as const, message: "Mission completed." }],
+            };
+          }
+          // Promote next pending to running immediately
+          const nextIdx = steps.findIndex((s) => s.status === "pending");
+          if (nextIdx !== -1) steps[nextIdx] = { ...steps[nextIdx], status: "running" };
+
+          return { ...m, steps, progress, outputs: newOutputs, files: newFiles, cost, logs };
+        });
+
+        // Emit completion notifications for missions that just completed
+        const justCompleted = next.filter(
+          (m, i) => m.status === "completed" && ms[i]?.status === "running",
+        );
+        if (justCompleted.length) {
+          setNotifications((cur) => [
+            ...justCompleted.map<NotificationItem>((m) => ({
+              id: crypto.randomUUID(),
+              category: "mission_completed",
+              title: "Mission completed",
+              body: `${m.title} finished with ${m.outputs.length} outputs.`,
+              ts: Date.now(),
+              read: false,
+              archived: false,
+              missionId: m.id,
+            })),
+            ...cur,
+          ]);
+        }
+        return changed ? next : ms;
+      });
+    }, 2500);
+    return () => {
+      if (engineRef.current) window.clearInterval(engineRef.current);
+    };
+  }, []);
 
   const value: StoreState = useMemo(
     () => ({
-      missions, projects, integrations, models, notifications, knowledge, events, credits,
+      missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, credits,
       createMissionDraft(title, projectId) {
-        const plan = planFor(title);
+        const plan = planFor(title, workspace);
         const mission: Mission = {
           id: crypto.randomUUID(),
           title: title.trim(),
@@ -409,7 +608,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           estimatedMinutes: plan.minutes,
           apps: plan.apps,
           steps: plan.steps,
-          logs: [{ ts: Date.now(), level: "info", message: "Execution plan generated. Awaiting approval." }],
+          logs: [
+            { ts: Date.now(), level: "info", message: "Understanding request." },
+            { ts: Date.now() + 1, level: "info", message: "Execution plan generated. Awaiting approval." },
+          ],
           outputs: [],
           files: [],
           projectId,
@@ -516,10 +718,62 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setMissions((ms) => ms.map((m) => (m.projectId === id ? { ...m, projectId: undefined } : m)));
       },
       toggleIntegration(id) {
-        setIntegrations((xs) => xs.map((i) => (i.id === id ? { ...i, connected: !i.connected } : i)));
+        setIntegrations((xs) => xs.map((i) => (i.id === id ? { ...i, connected: !i.connected, lastSync: !i.connected ? Date.now() : i.lastSync } : i)));
       },
       toggleModel(id) {
         setModels((xs) => xs.map((i) => (i.id === id ? { ...i, enabled: !i.enabled } : i)));
+      },
+      updateProvider(id, patch) {
+        setProviders((xs) => xs.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+      },
+      setDefaultProvider(id) {
+        setProviders((xs) => xs.map((p) => ({ ...p, isDefault: p.id === id })));
+      },
+      async testProvider(id) {
+        const key = apiKeys.find((k) => k.providerId === id);
+        await new Promise((r) => setTimeout(r, 900));
+        const ok = !!key;
+        setProviders((xs) =>
+          xs.map((p) =>
+            p.id === id
+              ? { ...p, status: ok ? "connected" : "error", lastTestedAt: Date.now(), apiKeyId: key?.id }
+              : p,
+          ),
+        );
+        return ok;
+      },
+      addApiKey({ providerId, label, rawKey }) {
+        const key: ApiKey = {
+          id: crypto.randomUUID(),
+          providerId,
+          label: label.trim() || `${providerId} key`,
+          maskedKey: maskKey(rawKey),
+          createdAt: Date.now(),
+          status: "untested",
+        };
+        setApiKeys((ks) => [key, ...ks]);
+        setProviders((xs) => xs.map((p) => (p.id === providerId ? { ...p, apiKeyId: key.id, status: "connected", enabled: true } : p)));
+        return key;
+      },
+      removeApiKey(id) {
+        const target = apiKeys.find((k) => k.id === id);
+        setApiKeys((ks) => ks.filter((k) => k.id !== id));
+        if (target) {
+          setProviders((xs) =>
+            xs.map((p) =>
+              p.apiKeyId === id ? { ...p, apiKeyId: undefined, status: "disconnected", enabled: false } : p,
+            ),
+          );
+        }
+      },
+      async testApiKey(id) {
+        await new Promise((r) => setTimeout(r, 900));
+        const ok = Math.random() > 0.15;
+        setApiKeys((ks) => ks.map((k) => (k.id === id ? { ...k, status: ok ? "valid" : "invalid", lastTestedAt: Date.now() } : k)));
+        return ok;
+      },
+      updateWorkspace(patch) {
+        setWorkspace((w) => ({ ...w, ...patch }));
       },
       markNotificationRead(id) {
         setNotifications((ns) => ns.map((n) => (n.id === id ? { ...n, read: true } : n)));
@@ -537,7 +791,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setKnowledge((ks) => ks.filter((k) => k.id !== id));
       },
     }),
-    [missions, projects, integrations, models, notifications, knowledge, events, credits],
+    [missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, credits],
   );
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
