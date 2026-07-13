@@ -189,14 +189,39 @@ function MissionDetail() {
           {mission.outputs.length === 0 ? (
             <EmptyState label="Outputs will appear here as the mission progresses." />
           ) : (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {mission.outputs.map((o) => (
-                <Card key={o} className="border-border bg-card p-4">
-                  <div className="text-sm font-medium">{o}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">Ready to review</div>
-                </Card>
-              ))}
-            </div>
+            <>
+              <div className="mb-4 flex items-center justify-between">
+                <div className="text-xs text-muted-foreground">{mission.outputs.length} outputs generated</div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full border-border bg-surface"
+                  onClick={() => {
+                    const blob = new Blob(
+                      [JSON.stringify({ mission: mission.title, objective: mission.objective, outputs: mission.outputs, files: mission.files, apps: mission.apps }, null, 2)],
+                      { type: "application/json" },
+                    );
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `${mission.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-outputs.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    toast.success("Export downloaded");
+                  }}
+                >
+                  Export mission
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {mission.outputs.map((o) => (
+                  <Card key={o} className="border-border bg-card p-4">
+                    <div className="text-sm font-medium">{o}</div>
+                    <div className="mt-1 text-xs text-muted-foreground">Ready to review</div>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </TabsContent>
 
