@@ -6,7 +6,7 @@ import {
 import { useStore } from "@/lib/store";
 import {
   Home, Rocket, FolderKanban, Plug, Sparkles, BookOpen, Calendar, Bell,
-  User as UserIcon, Settings as SettingsIcon, FileText, Search, KeyRound, Building2,
+  User as UserIcon, Settings as SettingsIcon, FileText, Search, KeyRound, Building2, Film,
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
