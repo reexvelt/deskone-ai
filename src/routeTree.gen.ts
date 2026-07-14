@@ -15,6 +15,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppWorkspaceRouteImport } from './routes/_app.workspace'
+import { Route as AppStudioRouteImport } from './routes/_app.studio'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppProfileRouteImport } from './routes/_app.profile'
@@ -56,6 +57,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppWorkspaceRoute = AppWorkspaceRouteImport.update({
   id: '/workspace',
   path: '/workspace',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudioRoute = AppStudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRouteWithChildren
   '/settings': typeof AppSettingsRoute
+  '/studio': typeof AppStudioRoute
   '/workspace': typeof AppWorkspaceRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRouteWithChildren
   '/settings': typeof AppSettingsRoute
+  '/studio': typeof AppStudioRoute
   '/workspace': typeof AppWorkspaceRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/_app/profile': typeof AppProfileRoute
   '/_app/projects': typeof AppProjectsRouteWithChildren
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/studio': typeof AppStudioRoute
   '/_app/workspace': typeof AppWorkspaceRoute
   '/_app/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/settings'
+    | '/studio'
     | '/workspace'
     | '/missions/$missionId'
     | '/projects/$projectId'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/projects'
     | '/settings'
+    | '/studio'
     | '/workspace'
     | '/missions/$missionId'
     | '/projects/$projectId'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/_app/profile'
     | '/_app/projects'
     | '/_app/settings'
+    | '/_app/studio'
     | '/_app/workspace'
     | '/_app/missions/$missionId'
     | '/_app/projects/$projectId'
@@ -300,6 +312,13 @@ declare module '@tanstack/react-router' {
       path: '/workspace'
       fullPath: '/workspace'
       preLoaderRoute: typeof AppWorkspaceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/studio': {
+      id: '/_app/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof AppStudioRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/settings': {
@@ -432,6 +451,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRoute
   AppProjectsRoute: typeof AppProjectsRouteWithChildren
   AppSettingsRoute: typeof AppSettingsRoute
+  AppStudioRoute: typeof AppStudioRoute
   AppWorkspaceRoute: typeof AppWorkspaceRoute
 }
 
@@ -447,6 +467,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppProjectsRoute: AppProjectsRouteWithChildren,
   AppSettingsRoute: AppSettingsRoute,
+  AppStudioRoute: AppStudioRoute,
   AppWorkspaceRoute: AppWorkspaceRoute,
 }
 
