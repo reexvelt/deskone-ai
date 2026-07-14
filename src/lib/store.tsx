@@ -182,6 +182,8 @@ interface StoreState {
   updateProject: (id: string, patch: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   toggleIntegration: (id: string) => void;
+  syncIntegration: (id: string) => void;
+  reconnectIntegration: (id: string) => void;
   toggleModel: (id: string) => void;
   updateProvider: (id: ProviderId, patch: Partial<AIProvider>) => void;
   setDefaultProvider: (id: ProviderId) => void;
