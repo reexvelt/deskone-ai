@@ -14,6 +14,7 @@ import {
   ChevronRight,
   KeyRound,
   Building2,
+  Film,
 } from "lucide-react";
 import { Logo } from "@/components/auth-shell";
 import { cn } from "@/lib/utils";
