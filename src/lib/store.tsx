@@ -752,7 +752,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setMissions((ms) => ms.map((m) => (m.projectId === id ? { ...m, projectId: undefined } : m)));
       },
       toggleIntegration(id) {
-        setIntegrations((xs) => xs.map((i) => (i.id === id ? { ...i, connected: !i.connected, lastSync: !i.connected ? Date.now() : i.lastSync } : i)));
+        setIntegrations((xs) => xs.map((i) => (i.id === id
+          ? { ...i, connected: !i.connected, lastSync: !i.connected ? Date.now() : i.lastSync, authStatus: !i.connected ? "healthy" : undefined, health: !i.connected ? 98 : undefined }
+          : i)));
+      },
+      syncIntegration(id) {
+        setIntegrations((xs) => xs.map((i) => (i.id === id && i.connected
+          ? { ...i, lastSync: Date.now(), health: Math.min(100, (i.health ?? 90) + 4) }
+          : i)));
+      },
+      reconnectIntegration(id) {
+        setIntegrations((xs) => xs.map((i) => (i.id === id
+          ? { ...i, connected: true, authStatus: "healthy", health: 99, lastSync: Date.now() }
+          : i)));
       },
       toggleModel(id) {
         setModels((xs) => xs.map((i) => (i.id === id ? { ...i, enabled: !i.enabled } : i)));
