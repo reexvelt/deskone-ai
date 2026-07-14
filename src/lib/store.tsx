@@ -77,6 +77,10 @@ export interface Integration {
   description: string;
   permissions?: string[];
   lastSync?: number;
+  authStatus?: "healthy" | "reauth_required" | "revoked" | "pending";
+  health?: number; // 0-100
+  supportedActions?: string[];
+  accent?: string;
 }
 
 export interface AIModelInfo {
