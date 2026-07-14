@@ -319,32 +319,60 @@ const seedProjects = (): Project[] => [
   },
 ];
 
-const seedIntegrations = (): Integration[] => [
-  { id: "openai", name: "OpenAI", category: "AI", connected: true, description: "GPT reasoning models.", permissions: ["chat.completions", "embeddings"], lastSync: Date.now() - 3600000 },
-  { id: "gemini", name: "Google Gemini", category: "AI", connected: false, description: "Multimodal Gemini models.", permissions: ["generate", "embed"] },
-  { id: "claude", name: "Anthropic Claude", category: "AI", connected: false, description: "Long-context reasoning.", permissions: ["messages"] },
-  { id: "elevenlabs", name: "ElevenLabs", category: "AI", connected: false, description: "Text-to-speech voices.", permissions: ["voices", "generate"] },
+const seedIntegrations = (): Integration[] => {
+  const now = Date.now();
+  const mk = (
+    id: string, name: string, category: string, connected: boolean,
+    description: string, accent: string,
+    opts: { perms?: string[]; actions?: string[]; sync?: number; auth?: Integration["authStatus"]; health?: number } = {},
+  ): Integration => ({
+    id, name, category, connected, description, accent,
+    permissions: opts.perms,
+    supportedActions: opts.actions,
+    lastSync: connected ? opts.sync ?? now - 3600000 * 2 : undefined,
+    authStatus: connected ? opts.auth ?? "healthy" : undefined,
+    health: connected ? opts.health ?? 98 : undefined,
+  });
+  return [
+    // AI
+    mk("openai", "OpenAI", "AI", true, "GPT reasoning & multimodal models.", "#10A37F", { perms: ["chat.completions", "embeddings", "images"], actions: ["Generate text", "Embed", "Image gen"], health: 99 }),
+    mk("gemini", "Google Gemini", "AI", false, "Multimodal Gemini 2.5 family.", "#4285F4", { perms: ["generate", "embed"], actions: ["Generate", "Vision"] }),
+    mk("claude", "Anthropic Claude", "AI", false, "Long-context reasoning.", "#D97757", { perms: ["messages"], actions: ["Generate", "Analyze"] }),
+    mk("elevenlabs", "ElevenLabs", "AI", false, "Text-to-speech voices.", "#111111", { perms: ["voices", "generate"], actions: ["TTS", "Voice clone"] }),
 
-  { id: "gdrive", name: "Google Drive", category: "Storage", connected: true, description: "Read and write files.", permissions: ["drive.file", "drive.metadata"], lastSync: Date.now() - 86400000 },
-  { id: "gdocs", name: "Google Docs", category: "Storage", connected: true, description: "Create and edit documents.", permissions: ["docs.readwrite"], lastSync: Date.now() - 3600000 * 6 },
-  { id: "gsheets", name: "Google Sheets", category: "Storage", connected: false, description: "Structured data workflows.", permissions: ["sheets.readwrite"] },
-  { id: "notion", name: "Notion", category: "Storage", connected: true, description: "Docs and databases.", permissions: ["read_content", "update_content"], lastSync: Date.now() - 3600000 * 2 },
+    // Storage
+    mk("gdrive", "Google Drive", "Storage", true, "Read and write files.", "#1FA463", { perms: ["drive.file", "drive.metadata"], actions: ["Upload", "Search", "Share"], sync: now - 86400000, health: 92 }),
+    mk("gdocs", "Google Docs", "Storage", true, "Create and edit documents.", "#4285F4", { perms: ["docs.readwrite"], actions: ["Create", "Edit"], sync: now - 3600000 * 6 }),
+    mk("gsheets", "Google Sheets", "Storage", false, "Structured data workflows.", "#0F9D58", { perms: ["sheets.readwrite"], actions: ["Read rows", "Append", "Update"] }),
+    mk("dropbox", "Dropbox", "Storage", false, "Cloud file storage.", "#0061FF", { perms: ["files.content.write"], actions: ["Upload", "Share"] }),
+    mk("onedrive", "OneDrive", "Storage", false, "Microsoft cloud storage.", "#0078D4", { perms: ["files.readwrite"], actions: ["Upload", "Sync"] }),
+    mk("notion", "Notion", "Storage", true, "Docs and databases.", "#000000", { perms: ["read_content", "update_content"], actions: ["Create page", "Update DB"], sync: now - 3600000 * 2 }),
 
-  { id: "gmail", name: "Gmail", category: "Communication", connected: true, description: "Send and manage email.", permissions: ["gmail.send", "gmail.compose"], lastSync: Date.now() - 3600000 * 3 },
-  { id: "slack", name: "Slack", category: "Communication", connected: false, description: "Post and read messages.", permissions: ["chat:write", "channels:read"] },
-  { id: "discord", name: "Discord", category: "Communication", connected: false, description: "Server automations.", permissions: ["messages.send"] },
+    // Communication
+    mk("gmail", "Gmail", "Communication", true, "Send and manage email.", "#EA4335", { perms: ["gmail.send", "gmail.compose"], actions: ["Send", "Draft", "Search"], sync: now - 3600000 * 3, auth: "reauth_required", health: 68 }),
+    mk("slack", "Slack", "Communication", false, "Post and read messages.", "#4A154B", { perms: ["chat:write", "channels:read"], actions: ["Post", "Notify"] }),
+    mk("discord", "Discord", "Communication", false, "Server automations.", "#5865F2", { perms: ["messages.send"], actions: ["Post", "Webhook"] }),
 
-  { id: "youtube", name: "YouTube", category: "Content", connected: false, description: "Upload and manage videos.", permissions: ["youtube.upload"] },
-  { id: "figma", name: "Figma", category: "Content", connected: false, description: "Frames and assets.", permissions: ["files:read"] },
-  { id: "gcal", name: "Google Calendar", category: "Content", connected: true, description: "Schedule and reminders.", permissions: ["calendar.events"], lastSync: Date.now() - 3600000 },
+    // Content / Publishing (social)
+    mk("youtube", "YouTube", "Publishing", false, "Upload and manage videos.", "#FF0000", { perms: ["youtube.upload"], actions: ["Upload", "Schedule", "Update meta"] }),
+    mk("instagram", "Instagram", "Publishing", false, "Publish reels, posts, stories.", "#E1306C", { perms: ["publish_content"], actions: ["Post", "Reel", "Story"] }),
+    mk("tiktok", "TikTok", "Publishing", false, "Upload and schedule videos.", "#010101", { perms: ["video.publish"], actions: ["Upload", "Schedule"] }),
+    mk("linkedin", "LinkedIn", "Publishing", false, "Publish posts and articles.", "#0A66C2", { perms: ["w_member_social"], actions: ["Post", "Article"] }),
+    mk("x", "X", "Publishing", false, "Post and schedule threads.", "#000000", { perms: ["tweet.write"], actions: ["Post", "Thread", "Schedule"] }),
+    mk("facebook", "Facebook", "Publishing", false, "Pages and posts.", "#1877F2", { perms: ["pages_manage_posts"], actions: ["Post", "Schedule"] }),
+    mk("wordpress", "WordPress", "Publishing", false, "Publish blog posts.", "#21759B", { perms: ["posts.publish"], actions: ["Draft", "Publish"] }),
 
-  { id: "linkedin", name: "LinkedIn", category: "Publishing", connected: false, description: "Publish posts and articles.", permissions: ["w_member_social"] },
-  { id: "x", name: "X", category: "Publishing", connected: false, description: "Post and schedule.", permissions: ["tweet.write"] },
+    // Content tools
+    mk("gcal", "Google Calendar", "Content", true, "Schedule and reminders.", "#4285F4", { perms: ["calendar.events"], actions: ["Create event", "Reminder"], sync: now - 3600000 }),
+    mk("figma", "Figma", "Content", false, "Frames and design assets.", "#F24E1E", { perms: ["files:read"], actions: ["Read frames", "Export"] }),
+    mk("canva", "Canva", "Content", false, "Design and templates.", "#00C4CC", { perms: ["designs.read"], actions: ["Export", "Duplicate"] }),
 
-  { id: "github", name: "GitHub", category: "Productivity", connected: true, description: "Repos, PRs, issues.", permissions: ["repo", "workflow"], lastSync: Date.now() - 3600000 * 4 },
-  { id: "linear", name: "Linear", category: "Productivity", connected: false, description: "Issues and cycles.", permissions: ["issues.write"] },
-  { id: "stripe", name: "Stripe", category: "Productivity", connected: false, description: "Products and checkout.", permissions: ["products.write"] },
-];
+    // Productivity
+    mk("github", "GitHub", "Productivity", true, "Repos, PRs, issues.", "#24292F", { perms: ["repo", "workflow"], actions: ["Create PR", "Issue", "Release"], sync: now - 3600000 * 4 }),
+    mk("linear", "Linear", "Productivity", false, "Issues and cycles.", "#5E6AD2", { perms: ["issues.write"], actions: ["Create issue", "Update"] }),
+    mk("stripe", "Stripe", "Productivity", false, "Products and checkout.", "#635BFF", { perms: ["products.write"], actions: ["Product", "Payment link"] }),
+  ];
+};
 
 const seedModels = (): AIModelInfo[] => [
   { id: "orion", name: "Orion 1", provider: "DeskOne", description: "Balanced reasoning model.", enabled: true, tag: "reasoning" },
