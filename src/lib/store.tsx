@@ -475,7 +475,7 @@ const seedEvents = (): CalendarEvent[] => {
   ];
 };
 
-const KEY = "deskone.store.v3";
+const KEY = "deskone.store.v4";
 
 function maskKey(raw: string) {
   const trimmed = raw.trim();
