@@ -14,6 +14,7 @@ import {
   ChevronRight,
   KeyRound,
   Building2,
+  Film,
 } from "lucide-react";
 import { Logo } from "@/components/auth-shell";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ const items = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/missions", label: "Missions", icon: Rocket },
   { to: "/projects", label: "Projects", icon: FolderKanban },
+  { to: "/studio", label: "Content Studio", icon: Film },
   { to: "/integrations", label: "Integrations", icon: Plug },
   { to: "/ai-models", label: "AI Models", icon: Sparkles },
   { to: "/api-keys", label: "API Keys", icon: KeyRound },

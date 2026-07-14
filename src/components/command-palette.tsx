@@ -6,7 +6,7 @@ import {
 import { useStore } from "@/lib/store";
 import {
   Home, Rocket, FolderKanban, Plug, Sparkles, BookOpen, Calendar, Bell,
-  User as UserIcon, Settings as SettingsIcon, FileText, Search, KeyRound, Building2,
+  User as UserIcon, Settings as SettingsIcon, FileText, Search, KeyRound, Building2, Film,
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
@@ -28,6 +28,7 @@ const NAV: { label: string; to: string; icon: React.ComponentType<{ className?: 
   { label: "Home", to: "/home", icon: Home },
   { label: "Missions", to: "/missions", icon: Rocket },
   { label: "Projects", to: "/projects", icon: FolderKanban },
+  { label: "Content Studio", to: "/studio", icon: Film },
   { label: "Integrations", to: "/integrations", icon: Plug },
   { label: "AI Models", to: "/ai-models", icon: Sparkles },
   { label: "API Keys", to: "/api-keys", icon: KeyRound },
