@@ -44,9 +44,9 @@ export function TopNav() {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/70 px-4 backdrop-blur-xl md:px-8">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border bg-background/70 px-3 backdrop-blur-xl sm:gap-4 sm:px-4 md:px-8">
       <div className="min-w-0 flex-1">
-        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">DeskOne</div>
+        <div className="hidden text-xs uppercase tracking-[0.18em] text-muted-foreground sm:block">DeskOne</div>
         <div className="truncate text-sm font-semibold">{title}</div>
       </div>
 
