@@ -44,9 +44,9 @@ export function TopNav() {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/70 px-4 backdrop-blur-xl md:px-8">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-border bg-background/70 px-3 backdrop-blur-xl sm:gap-4 sm:px-4 md:px-8">
       <div className="min-w-0 flex-1">
-        <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">DeskOne</div>
+        <div className="hidden text-xs uppercase tracking-[0.18em] text-muted-foreground sm:block">DeskOne</div>
         <div className="truncate text-sm font-semibold">{title}</div>
       </div>
 
@@ -81,13 +81,13 @@ export function TopNav() {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-3 rounded-full border border-border bg-surface/60 py-1 pl-1 pr-3 transition hover:bg-surface">
+          <button className="flex shrink-0 items-center gap-3 rounded-full border border-border bg-surface/60 py-1 pl-1 transition hover:bg-surface sm:pr-3">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-primary/20 text-xs font-semibold text-primary">{initials}</AvatarFallback>
             </Avatar>
-            <div className="hidden text-left leading-tight sm:block">
-              <div className="text-xs font-semibold">{user?.name}</div>
-              <div className="text-[10px] text-muted-foreground">{user?.email}</div>
+            <div className="hidden max-w-[160px] text-left leading-tight sm:block">
+              <div className="truncate text-xs font-semibold">{user?.name}</div>
+              <div className="truncate text-[10px] text-muted-foreground">{user?.email}</div>
             </div>
           </button>
         </DropdownMenuTrigger>

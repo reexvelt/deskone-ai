@@ -31,13 +31,13 @@ function HomePage() {
   const recentProjects = [...projects].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 3);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-14">
-      <div className="mb-10">
-        <div className="text-sm text-muted-foreground">{greeting()},</div>
-        <h1 className="mt-1 text-4xl font-semibold tracking-tight text-gradient sm:text-5xl">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-10 md:px-8 md:py-14">
+      <div className="mb-8 sm:mb-10">
+        <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground sm:text-sm sm:tracking-normal sm:normal-case">{greeting()},</div>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-gradient sm:text-5xl">
           {user?.name?.split(" ")[0] ?? "there"}.
         </h1>
-        <p className="mt-3 max-w-xl text-muted-foreground">
+        <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
           Describe an outcome. DeskOne will draft an execution plan and coordinate your apps to make it happen.
         </p>
       </div>
