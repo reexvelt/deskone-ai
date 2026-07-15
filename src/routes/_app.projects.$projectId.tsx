@@ -80,7 +80,7 @@ function ProjectWorkspace() {
   const docFiles = allFiles.filter((f) => !mediaFiles.includes(f));
 
   const allOutputs = projectMissions.flatMap((m) =>
-    m.outputs.map((o) => ({ text: o, mission: m.title, missionId: m.id, ts: m.updatedAt })),
+    m.outputs.map((o) => ({ text: o, mission: m.title, missionId: m.id, ts: m.completedAt ?? m.startedAt ?? m.createdAt })),
   );
   const byBucket = {
     caption: allOutputs.filter((o) => contentBucket(o.text) === "caption"),
