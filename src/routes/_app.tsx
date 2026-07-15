@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNav } from "@/components/top-nav";
 import { CommandPaletteProvider } from "@/components/command-palette";
+import { MobileBottomNav } from "@/components/mobile-nav";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
