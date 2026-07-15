@@ -101,7 +101,7 @@ function ProjectWorkspace() {
     ...projectMissions
       .filter((m) => m.status === "completed")
       .map((m) => ({
-        ts: m.updatedAt,
+        ts: m.completedAt ?? m.createdAt,
         title: `Completed — ${m.title}`,
         kind: "completed" as const,
         missionId: m.id,
