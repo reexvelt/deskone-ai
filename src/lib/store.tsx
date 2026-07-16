@@ -135,6 +135,32 @@ export interface KnowledgeFile {
   tag?: string;
 }
 
+export type AssetKind = "script" | "title" | "description" | "caption" | "hashtag" | "cta" | "media";
+export type AssetStatus = "draft" | "approved";
+export type PublishState = "idle" | "draft" | "scheduled" | "published";
+
+export interface AssetPublish {
+  platform: string;
+  state: PublishState;
+  scheduledAt?: number;
+  publishedAt?: number;
+}
+
+export interface ProjectAsset {
+  id: string;
+  projectId: string;
+  missionId?: string;
+  kind: AssetKind;
+  title: string;
+  body: string;
+  status: AssetStatus;
+  createdAt: number;
+  updatedAt: number;
+  mediaName?: string;
+  mediaKind?: "video" | "audio" | "image" | "document";
+  publish?: AssetPublish;
+}
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -159,6 +185,7 @@ export interface WorkspaceMemory {
   businessInfo: string;
 }
 
+
 interface StoreState {
   missions: Mission[];
   projects: Project[];
@@ -170,6 +197,7 @@ interface StoreState {
   knowledge: KnowledgeFile[];
   events: CalendarEvent[];
   workspace: WorkspaceMemory;
+  assets: ProjectAsset[];
   credits: { used: number; total: number };
   createMissionDraft: (title: string, projectId?: string) => Mission;
   approveMission: (id: string) => void;
@@ -178,6 +206,7 @@ interface StoreState {
   duplicateMission: (id: string) => Mission | null;
   deleteMission: (id: string) => void;
   updateMission: (id: string, patch: Partial<Mission>) => void;
+  assignMissionToProject: (missionId: string, projectId: string | undefined) => void;
   createProject: (input: { name: string; description?: string; color?: string; cover?: string }) => Project;
   updateProject: (id: string, patch: Partial<Project>) => void;
   deleteProject: (id: string) => void;
@@ -197,7 +226,14 @@ interface StoreState {
   archiveNotification: (id: string) => void;
   addKnowledgeFile: (f: Omit<KnowledgeFile, "id" | "uploadedAt" | "missionUsage">) => void;
   removeKnowledgeFile: (id: string) => void;
+  addAsset: (input: Omit<ProjectAsset, "id" | "createdAt" | "updatedAt" | "status"> & { status?: AssetStatus }) => ProjectAsset;
+  updateAsset: (id: string, patch: Partial<ProjectAsset>) => void;
+  approveAsset: (id: string) => void;
+  deleteAsset: (id: string) => void;
+  regenerateAsset: (id: string) => void;
+  setAssetPublish: (id: string, publish: AssetPublish | undefined) => void;
 }
+
 
 const StoreCtx = createContext<StoreState | null>(null);
 
@@ -477,7 +513,38 @@ const seedEvents = (): CalendarEvent[] => {
   ];
 };
 
-const KEY = "deskone.store.v4";
+const KEY = "deskone.store.v5";
+
+const HASHTAG_POOLS: Record<string, string[]> = {
+  default: ["#AItools", "#Productivity", "#ContentCreator", "#BuildInPublic", "#SaaS", "#Automation", "#Founders", "#Marketing"],
+};
+
+export function generateAssetBody(kind: AssetKind, subject: string, workspace?: WorkspaceMemory): string {
+  const brand = workspace?.brandName ?? "DeskOne";
+  const s = subject.trim() || "your content";
+  switch (kind) {
+    case "script":
+      return `HOOK\nStop scrolling — here's how ${s} actually ships in one afternoon with ${brand}.\n\nBODY\n1. The one belief holding creators back.\n2. What execution looks like when AI runs your stack.\n3. Live walk-through: from prompt to published.\n\nCTA\nSave this. Try ${brand} free. Tell a friend who's still chatting instead of shipping.`;
+    case "title":
+      return `1. The end of chatting with AI\n2. I let ${brand} run my ${s} — here's what happened\n3. From prompt to production in 22 minutes\n4. This is what execution actually looks like\n5. Stop chatting. Start shipping.`;
+    case "description":
+      return `${brand} is an AI execution platform. Instead of chatting, you set missions and watch them ship — connected to the tools you already use. In this ${s} I run a full workflow from a single prompt, end to end.`;
+    case "caption":
+      return `Not another AI tool. An execution engine.\n\nWatch how ${s} went from idea to shipped in one afternoon. Save this if you're building.`;
+    case "hashtag":
+      return HASHTAG_POOLS.default.join(" ");
+    case "cta":
+      return `Ready to stop chatting and start shipping? Try ${brand} free — set your first mission in under a minute. Link in bio.`;
+    case "media":
+      return s;
+  }
+}
+
+function regenerateBody(kind: AssetKind, current: string, workspace?: WorkspaceMemory): string {
+  const seed = current.split("\n")[0] ?? "";
+  return generateAssetBody(kind, seed.replace(/[^a-zA-Z0-9 ]+/g, "").slice(0, 40) || "your content", workspace);
+}
+
 
 function maskKey(raw: string) {
   const trimmed = raw.trim();
@@ -496,6 +563,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [knowledge, setKnowledge] = useState<KnowledgeFile[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [workspace, setWorkspace] = useState<WorkspaceMemory>(seedWorkspace());
+  const [assets, setAssets] = useState<ProjectAsset[]>([]);
   const [credits] = useState({ used: 4210, total: 10000 });
 
   useEffect(() => {
@@ -513,6 +581,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setKnowledge(data.knowledge ?? seedKnowledge());
         setEvents(data.events ?? seedEvents());
         setWorkspace(data.workspace ?? seedWorkspace());
+        setAssets(data.assets ?? []);
         return;
       }
     } catch {}
@@ -526,12 +595,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setKnowledge(seedKnowledge());
     setEvents(seedEvents());
     setWorkspace(seedWorkspace());
+    setAssets([]);
   }, []);
 
   useEffect(() => {
     if (!missions.length && !projects.length) return;
-    localStorage.setItem(KEY, JSON.stringify({ missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace }));
-  }, [missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace]);
+    localStorage.setItem(KEY, JSON.stringify({ missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, assets }));
+  }, [missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, assets]);
+
 
   // === Mission Execution Engine ===
   // Advances running missions step-by-step in near-real-time, producing outputs,
@@ -629,7 +700,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const value: StoreState = useMemo(
     () => ({
-      missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, credits,
+      missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, assets, credits,
       createMissionDraft(title, projectId) {
         const plan = planFor(title, workspace);
         const mission: Mission = {
@@ -836,9 +907,59 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       removeKnowledgeFile(id) {
         setKnowledge((ks) => ks.filter((k) => k.id !== id));
       },
+      assignMissionToProject(missionId, projectId) {
+        setMissions((ms) => ms.map((m) => (m.id === missionId ? { ...m, projectId } : m)));
+        setProjects((ps) => ps.map((p) => (p.id === projectId ? { ...p, missionCount: p.missionCount + 1, updatedAt: Date.now() } : p)));
+      },
+      addAsset(input) {
+        const a: ProjectAsset = {
+          id: crypto.randomUUID(),
+          projectId: input.projectId,
+          missionId: input.missionId,
+          kind: input.kind,
+          title: input.title,
+          body: input.body,
+          status: input.status ?? "draft",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          mediaName: input.mediaName,
+          mediaKind: input.mediaKind,
+          publish: input.publish,
+        };
+        setAssets((xs) => [a, ...xs]);
+        setProjects((ps) => ps.map((p) => (p.id === a.projectId ? { ...p, updatedAt: Date.now() } : p)));
+        return a;
+      },
+      updateAsset(id, patch) {
+        setAssets((xs) => xs.map((a) => (a.id === id ? { ...a, ...patch, updatedAt: Date.now() } : a)));
+      },
+      approveAsset(id) {
+        setAssets((xs) => xs.map((a) => (a.id === id ? { ...a, status: "approved", updatedAt: Date.now() } : a)));
+      },
+      deleteAsset(id) {
+        setAssets((xs) => xs.filter((a) => a.id !== id));
+      },
+      regenerateAsset(id) {
+        setAssets((xs) =>
+          xs.map((a) =>
+            a.id === id
+              ? {
+                  ...a,
+                  body: regenerateBody(a.kind, a.body, workspace),
+                  status: "draft",
+                  updatedAt: Date.now(),
+                }
+              : a,
+          ),
+        );
+      },
+      setAssetPublish(id, publish) {
+        setAssets((xs) => xs.map((a) => (a.id === id ? { ...a, publish, updatedAt: Date.now() } : a)));
+      },
     }),
-    [missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, credits],
+    [missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, assets, credits],
   );
+
 
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>;
 }
