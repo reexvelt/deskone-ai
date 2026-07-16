@@ -56,10 +56,12 @@ function contentBucket(text: string): "caption" | "script" | "headline" | "hasht
 
 function ProjectWorkspace() {
   const { projectId } = Route.useParams();
-  const { projects, missions, knowledge, integrations, events, updateProject } = useStore();
+  const { projects, missions, knowledge, integrations, events, assets, updateProject, approveAsset, deleteAsset } = useStore();
   const project = projects.find((p) => p.id === projectId);
 
   const projectMissions = useMemo(() => missions.filter((m) => m.projectId === projectId), [missions, projectId]);
+  const projectAssets = useMemo(() => assets.filter((a) => a.projectId === projectId), [assets, projectId]);
+
 
   if (!project) {
     return (
@@ -181,7 +183,7 @@ function ProjectWorkspace() {
         </div>
 
         <TabsContent value="overview" className="mt-5 space-y-5 sm:mt-6 sm:space-y-6">
-          <MissionComposer compact />
+          <MissionComposer compact projectId={project.id} />
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card className="border-border bg-card p-5 sm:p-6">
@@ -227,7 +229,7 @@ function ProjectWorkspace() {
         </TabsContent>
 
         <TabsContent value="missions" className="mt-5 space-y-4 sm:mt-6">
-          <MissionComposer compact />
+          <MissionComposer compact projectId={project.id} />
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {projectMissions.map((m) => (
               <Link key={m.id} to="/missions/$missionId" params={{ missionId: m.id }}>
@@ -328,7 +330,42 @@ function ProjectWorkspace() {
         </TabsContent>
 
         <TabsContent value="content" className="mt-5 space-y-5 sm:mt-6">
-          {allOutputs.length === 0 ? (
+          {projectAssets.length > 0 && (
+            <Card className="border-border bg-card p-5 sm:p-6">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <Sparkles className="h-4 w-4 text-primary" /> Studio assets
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {projectAssets.filter((a) => a.status === "approved").length} approved · {projectAssets.length} total
+                </div>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {projectAssets.slice(0, 12).map((a) => (
+                  <div key={a.id} className="rounded-xl border border-border bg-surface/50 p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="truncate text-xs font-semibold capitalize">{a.kind}</div>
+                      <Badge className={cn(
+                        "rounded-full border-0 text-[10px]",
+                        a.status === "approved" ? "bg-success/15 text-success" : "bg-muted text-muted-foreground",
+                      )}>
+                        {a.status}
+                      </Badge>
+                    </div>
+                    <div className="mt-1 line-clamp-3 text-xs text-muted-foreground">{a.body}</div>
+                    <div className="mt-2 flex gap-1.5">
+                      {a.status !== "approved" && (
+                        <Button size="sm" variant="outline" className="h-7 rounded-full border-border bg-surface px-2.5 text-[11px]" onClick={() => { approveAsset(a.id); toast.success("Approved"); }}>Approve</Button>
+                      )}
+                      <Button size="sm" variant="ghost" className="h-7 rounded-full px-2.5 text-[11px] text-destructive hover:text-destructive" onClick={() => { deleteAsset(a.id); toast("Deleted"); }}>Delete</Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {allOutputs.length === 0 && projectAssets.length === 0 ? (
             <EmptyMini label="Captions, scripts and generated content will appear here as missions produce them." />
           ) : (
             <>
@@ -341,6 +378,7 @@ function ProjectWorkspace() {
             </>
           )}
         </TabsContent>
+
 
         <TabsContent value="files" className="mt-5 sm:mt-6">
           <Card className="divide-y divide-border overflow-hidden border-border bg-card p-0">

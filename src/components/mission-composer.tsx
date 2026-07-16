@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowUpRight, Sparkles, Loader2 } from "lucide-react";
+import { ArrowUpRight, Sparkles, Loader2, FolderKanban } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { ExecutionPlanDialog } from "@/components/execution-plan-dialog";
 
@@ -14,22 +17,32 @@ const suggestions = [
   "Create social campaign",
 ];
 
-export function MissionComposer({ compact = false }: { compact?: boolean }) {
+export function MissionComposer({
+  compact = false,
+  projectId: fixedProjectId,
+}: {
+  compact?: boolean;
+  projectId?: string;
+}) {
   const [value, setValue] = useState("");
   const [pending, setPending] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(null);
-  const { createMissionDraft } = useStore();
+  const [selectedProject, setSelectedProject] = useState<string>(fixedProjectId ?? "none");
+  const { createMissionDraft, projects } = useStore();
   const navigate = useNavigate();
 
   async function submit(text: string) {
     if (!text.trim()) return toast.error("Describe what you want to accomplish");
     setPending(true);
     await new Promise((r) => setTimeout(r, 900));
-    const mission = createMissionDraft(text);
+    const pid = fixedProjectId ?? (selectedProject !== "none" ? selectedProject : undefined);
+    const mission = createMissionDraft(text, pid);
     setPending(false);
     setValue("");
     setDraftId(mission.id);
   }
+
+  const showProjectPicker = !fixedProjectId;
 
   return (
     <>
@@ -51,6 +64,22 @@ export function MissionComposer({ compact = false }: { compact?: boolean }) {
                 placeholder="What do you want to accomplish today?"
                 className="w-full resize-none bg-transparent text-lg font-medium leading-relaxed outline-none placeholder:text-muted-foreground sm:text-xl"
               />
+              {showProjectPicker && projects.length > 0 && (
+                <div className="mt-3 flex items-center gap-2">
+                  <FolderKanban className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Select value={selectedProject} onValueChange={setSelectedProject}>
+                    <SelectTrigger className="h-8 w-full max-w-xs rounded-full border-border bg-surface text-xs">
+                      <SelectValue placeholder="No project" />
+                    </SelectTrigger>
+                    <SelectContent className="border-border bg-card">
+                      <SelectItem value="none">No project</SelectItem>
+                      {projects.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
             <Button
               onClick={() => submit(value)}
