@@ -14,7 +14,477 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activity_logs: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          meta: Json
+          mission_id: string | null
+          project_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          message: string
+          meta?: Json
+          mission_id?: string | null
+          project_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          meta?: Json
+          mission_id?: string | null
+          project_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assets: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["asset_kind"]
+          media_kind: string | null
+          media_name: string | null
+          mission_id: string | null
+          project_id: string | null
+          publish: Json | null
+          status: Database["public"]["Enums"]["asset_status"]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["asset_kind"]
+          media_kind?: string | null
+          media_name?: string | null
+          mission_id?: string | null
+          project_id?: string | null
+          publish?: Json | null
+          status?: Database["public"]["Enums"]["asset_status"]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["asset_kind"]
+          media_kind?: string | null
+          media_name?: string | null
+          mission_id?: string | null
+          project_id?: string | null
+          publish?: Json | null
+          status?: Database["public"]["Enums"]["asset_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connected_accounts: {
+        Row: {
+          connected_at: string
+          email: string | null
+          expires_at: string | null
+          id: string
+          meta: Json
+          provider: string
+          provider_account_id: string | null
+          scopes: string[]
+          status: string
+          user_id: string
+        }
+        Insert: {
+          connected_at?: string
+          email?: string | null
+          expires_at?: string | null
+          id?: string
+          meta?: Json
+          provider: string
+          provider_account_id?: string | null
+          scopes?: string[]
+          status?: string
+          user_id: string
+        }
+        Update: {
+          connected_at?: string
+          email?: string | null
+          expires_at?: string | null
+          id?: string
+          meta?: Json
+          provider?: string
+          provider_account_id?: string | null
+          scopes?: string[]
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      files: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          mime: string
+          mission_id: string | null
+          name: string
+          project_id: string | null
+          size: number
+          storage_path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          mime?: string
+          mission_id?: string | null
+          name: string
+          project_id?: string | null
+          size?: number
+          storage_path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          mime?: string
+          mission_id?: string | null
+          name?: string
+          project_id?: string | null
+          size?: number
+          storage_path?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "files_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "files_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      missions: {
+        Row: {
+          apps: string[]
+          completed_at: string | null
+          cost: number
+          created_at: string
+          estimated_minutes: number
+          id: string
+          logs: Json
+          objective: string
+          outputs: Json
+          progress: number
+          project_id: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["mission_status"]
+          steps: Json
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          apps?: string[]
+          completed_at?: string | null
+          cost?: number
+          created_at?: string
+          estimated_minutes?: number
+          id?: string
+          logs?: Json
+          objective?: string
+          outputs?: Json
+          progress?: number
+          project_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["mission_status"]
+          steps?: Json
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          apps?: string[]
+          completed_at?: string | null
+          cost?: number
+          created_at?: string
+          estimated_minutes?: number
+          id?: string
+          logs?: Json
+          objective?: string
+          outputs?: Json
+          progress?: number
+          project_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["mission_status"]
+          steps?: Json
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          archived: boolean
+          body: string
+          category: Database["public"]["Enums"]["notification_category"]
+          created_at: string
+          id: string
+          mission_id: string | null
+          project_id: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          body?: string
+          category: Database["public"]["Enums"]["notification_category"]
+          created_at?: string
+          id?: string
+          mission_id?: string | null
+          project_id?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          body?: string
+          category?: Database["public"]["Enums"]["notification_category"]
+          created_at?: string
+          id?: string
+          mission_id?: string | null
+          project_id?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          credits_total: number
+          credits_used: number
+          email: string | null
+          id: string
+          name: string | null
+          updated_at: string
+          workspace: Json
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          credits_total?: number
+          credits_used?: number
+          email?: string | null
+          id: string
+          name?: string | null
+          updated_at?: string
+          workspace?: Json
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          credits_total?: number
+          credits_used?: number
+          email?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string
+          workspace?: Json
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          apps: string[]
+          color: string
+          cover: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          notes: string
+          status: Database["public"]["Enums"]["project_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          apps?: string[]
+          color?: string
+          cover?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          notes?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          apps?: string[]
+          color?: string
+          cover?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          notes?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      schedules: {
+        Row: {
+          asset_id: string | null
+          color: string
+          created_at: string
+          id: string
+          mission_id: string | null
+          notes: string
+          project_id: string | null
+          scheduled_at: string
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          asset_id?: string | null
+          color?: string
+          created_at?: string
+          id?: string
+          mission_id?: string | null
+          notes?: string
+          project_id?: string | null
+          scheduled_at: string
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          asset_id?: string | null
+          color?: string
+          created_at?: string
+          id?: string
+          mission_id?: string | null
+          notes?: string
+          project_id?: string | null
+          scheduled_at?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedules_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "schedules_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "schedules_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +493,33 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      asset_kind:
+        | "script"
+        | "title"
+        | "description"
+        | "caption"
+        | "hashtag"
+        | "cta"
+        | "media"
+      asset_status: "draft" | "approved"
+      mission_status:
+        | "planning"
+        | "awaiting_approval"
+        | "running"
+        | "completed"
+        | "cancelled"
+        | "failed"
+      notification_category:
+        | "mission_completed"
+        | "mission_failed"
+        | "approval_required"
+        | "integration_error"
+        | "system_update"
+        | "upload_completed"
+        | "generation_completed"
+        | "schedule_created"
+        | "account_connected"
+      project_status: "active" | "paused" | "archived" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +646,37 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      asset_kind: [
+        "script",
+        "title",
+        "description",
+        "caption",
+        "hashtag",
+        "cta",
+        "media",
+      ],
+      asset_status: ["draft", "approved"],
+      mission_status: [
+        "planning",
+        "awaiting_approval",
+        "running",
+        "completed",
+        "cancelled",
+        "failed",
+      ],
+      notification_category: [
+        "mission_completed",
+        "mission_failed",
+        "approval_required",
+        "integration_error",
+        "system_update",
+        "upload_completed",
+        "generation_completed",
+        "schedule_created",
+        "account_connected",
+      ],
+      project_status: ["active", "paused", "archived", "completed"],
+    },
   },
 } as const
