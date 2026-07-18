@@ -29,6 +29,8 @@ function LoginPage() {
     try {
       await login(email, password);
       navigate({ to: "/home" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Sign in failed");
     } finally {
       setLoading(false);
     }
@@ -73,8 +75,11 @@ function LoginPage() {
           variant="outline"
           className="h-11 w-full rounded-full border-border bg-surface text-sm font-medium hover:bg-accent"
           onClick={async () => {
-            await loginWithGoogle();
-            navigate({ to: "/home" });
+            try {
+              await loginWithGoogle();
+            } catch (err) {
+              toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+            }
           }}
         >
           <GoogleIcon /> Continue with Google
