@@ -28,6 +28,8 @@ function RegisterPage() {
       await register(name, email, password);
       toast.success("Welcome to DeskOne");
       navigate({ to: "/home" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setLoading(false);
     }

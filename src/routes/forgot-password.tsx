@@ -4,6 +4,7 @@ import { AuthShell } from "@/components/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/forgot-password")({
@@ -11,8 +12,24 @@ export const Route = createFileRoute("/forgot-password")({
 });
 
 function ForgotPage() {
+  const { sendPasswordReset } = useAuth();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return toast.error("Enter your email");
+    setLoading(true);
+    try {
+      await sendPasswordReset(email);
+      setSent(true);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send reset email");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <AuthShell
@@ -29,20 +46,13 @@ function ForgotPage() {
           If an account exists for <span className="font-medium">{email}</span>, a reset link is on its way.
         </div>
       ) : (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!email) return toast.error("Enter your email");
-            setSent(true);
-          }}
-          className="space-y-4"
-        >
+        <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
-          <Button type="submit" className="h-11 w-full rounded-full">
-            Send reset link
+          <Button type="submit" className="h-11 w-full rounded-full" disabled={loading}>
+            {loading ? "Sending…" : "Send reset link"}
           </Button>
         </form>
       )}
