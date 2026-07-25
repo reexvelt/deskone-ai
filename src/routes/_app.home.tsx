@@ -1,172 +1,301 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useAuth } from "@/lib/auth";
-import { useStore } from "@/lib/store";
-import { MissionComposer } from "@/components/mission-composer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Zap, Plug, Coins, ArrowUpRight, Calendar, Clock } from "lucide-react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import {
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  FolderKanban,
+  Plus,
+  Sparkles,
+  SquareTerminal,
+  UploadCloud,
+  WandSparkles,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_app/home")({
   component: HomePage,
 });
 
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 5) return "Good Night";
-  if (h < 12) return "Good Morning";
-  if (h < 18) return "Good Afternoon";
-  return "Good Evening";
-}
+const quickActions = [
+  { label: "New Mission", icon: WandSparkles, to: "/missions" },
+  { label: "New Project", icon: FolderKanban, to: "/projects" },
+  { label: "Upload File", icon: UploadCloud, to: "/studio" },
+  { label: "Open Calendar", icon: CalendarDays, to: "/calendar" },
+];
+
+const missions = [
+  {
+    title: "YouTube video launch",
+    status: "Running",
+    progress: 72,
+    time: "Today • 2:30 PM",
+  },
+  {
+    title: "Instagram content pack",
+    status: "Awaiting approval",
+    progress: 48,
+    time: "Today • 5:00 PM",
+  },
+  {
+    title: "Food creator campaign",
+    status: "Completed",
+    progress: 100,
+    time: "Yesterday",
+  },
+];
+
+const projects = [
+  {
+    name: "Food Creator Workspace",
+    meta: "12 assets • 5 missions",
+  },
+  {
+    name: "Personal Brand Campaign",
+    meta: "8 assets • 3 missions",
+  },
+  {
+    name: "Client Content Sprint",
+    meta: "19 assets • 7 missions",
+  },
+];
+
+const connectedApps = [
+  "Google Drive",
+  "Google Calendar",
+  "Gmail",
+  "YouTube",
+  "Instagram",
+  "Notion",
+];
 
 function HomePage() {
-  const { user } = useAuth();
-  const { missions, projects, integrations, credits } = useStore();
-
-  const running = missions.filter((m) => m.status === "running").length;
-  const completed = missions.filter((m) => m.status === "completed").length;
-  const connectedApps = integrations.filter((i) => i.connected).length;
-
-  const recentMissions = [...missions].sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
-  const recentProjects = [...projects].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 3);
-
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-10 md:px-8 md:py-14">
-      <div className="mb-8 sm:mb-10">
-        <div className="text-xs uppercase tracking-[0.14em] text-muted-foreground sm:text-sm sm:tracking-normal sm:normal-case">{greeting()},</div>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-gradient sm:text-5xl">
-          {user?.name?.split(" ")[0] ?? "there"}.
-        </h1>
-        <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-          Describe an outcome. DeskOne will draft an execution plan and coordinate your apps to make it happen.
-        </p>
-      </div>
+    <div className="space-y-6 pb-10">
+      {/* Hero */}
+      <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white/60">
+            <Sparkles className="h-4 w-4 text-[#7C5CFF]" />
+            AnchorSpace Home
+          </div>
 
-      <MissionComposer />
+          <h1 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+            What do you want to accomplish today?
+          </h1>
 
-      <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard icon={CheckCircle2} label="Completed missions" value={completed} tint="var(--color-success)" />
-        <StatCard icon={Zap} label="Running missions" value={running} tint="var(--color-primary)" />
-        <StatCard icon={Plug} label="Connected apps" value={connectedApps} tint="var(--color-secondary)" />
-        <StatCard icon={Coins} label="Credits used" value={`${credits.used.toLocaleString()} / ${credits.total.toLocaleString()}`} tint="var(--color-warning)" />
-      </div>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
+            Manage projects, missions, content, and connected apps from one premium workspace built for creators and freelancers.
+          </p>
 
-      <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-2 border-border bg-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-sm font-semibold">Recent missions</CardTitle>
-            <Link to="/missions" className="text-xs text-muted-foreground hover:text-foreground">
-              View all <ArrowUpRight className="ml-0.5 inline h-3 w-3" />
-            </Link>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {recentMissions.length === 0 && <div className="text-sm text-muted-foreground">No missions yet.</div>}
-            {recentMissions.map((m) => (
-              <Link
-                key={m.id}
-                to="/missions/$missionId"
-                params={{ missionId: m.id }}
-                className="block rounded-xl border border-border bg-surface/50 p-4 transition hover:border-primary/30 hover:bg-surface"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">{m.title}</div>
-                    <div className="mt-0.5 text-xs text-muted-foreground">
-                      {m.apps.slice(0, 3).join(" · ")}
-                    </div>
-                  </div>
-                  <StatusBadge status={m.status} />
+          <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-[#0B0D12] p-4 sm:p-5">
+            <div className="flex items-start gap-3">
+              <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C5CFF]/20 to-[#3AA7FF]/20">
+                <SquareTerminal className="h-5 w-5 text-white/85" />
+              </div>
+
+              <div className="w-full">
+                <p className="text-sm font-medium text-white/55">Mission Command</p>
+                <div className="mt-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/80">
+                  Create a food content campaign, generate captions, save assets, and schedule it for Friday.
                 </div>
-                <div className="mt-3">
-                  <Progress value={m.progress} className="h-1.5" />
-                </div>
-              </Link>
-            ))}
-          </CardContent>
-        </Card>
 
-        <div className="space-y-6">
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="text-sm font-semibold">Recent projects</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {recentProjects.map((p) => (
-                <div key={p.id} className="flex items-center gap-3 rounded-lg p-2 transition hover:bg-surface/60">
-                  <span className="h-8 w-8 shrink-0 rounded-lg" style={{ background: `linear-gradient(135deg, ${p.color}, transparent)` }} />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm font-medium">{p.name}</div>
-                    <div className="truncate text-xs text-muted-foreground">{p.missionCount} missions</div>
-                  </div>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#7C5CFF] to-[#3AA7FF] px-5 py-3 text-sm font-semibold text-white transition hover:translate-y-[-1px]">
+                    Run Mission <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <button className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/10">
+                    <Plus className="h-4 w-4" />
+                    New Mission
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-4">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-white/40">Today</p>
+                <h2 className="mt-2 text-xl font-semibold">Workspace overview</h2>
+              </div>
+              <Clock3 className="h-5 w-5 text-white/50" />
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              {[
+                ["Missions", "12 active"],
+                ["Projects", "3 in progress"],
+                ["Storage", "68% used"],
+                ["AI tasks", "26 this week"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl border border-white/10 bg-[#0B0D12] px-4 py-4">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">{label}</p>
+                  <p className="mt-2 text-lg font-semibold">{value}</p>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card className="border-border bg-card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle className="text-sm font-semibold">Upcoming</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <ScheduleItem title="Weekly content sync" time="Tomorrow · 09:00" />
-              <ScheduleItem title="Ebook launch email" time="Fri · 14:00" />
-              <ScheduleItem title="Team review" time="Mon · 10:30" />
-            </CardContent>
-          </Card>
+          <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#7C5CFF]/15 to-[#3AA7FF]/10 p-6 backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-white/40">Next</p>
+                <h2 className="mt-2 text-xl font-semibold">Upcoming schedule</h2>
+              </div>
+              <CalendarDays className="h-5 w-5 text-white/50" />
+            </div>
+
+            <div className="mt-5 space-y-3">
+              <div className="rounded-2xl border border-white/10 bg-[#0B0D12] px-4 py-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">Publish reel draft</p>
+                  <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-400">
+                    Friday
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-white/50">Scheduled for 6:00 PM</p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-[#0B0D12] px-4 py-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">Client approval review</p>
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/60">Today</span>
+                </div>
+                <p className="mt-2 text-sm text-white/50">Waiting for approval</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  );
-}
+      </section>
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  tint,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string | number;
-  tint: string;
-}) {
-  return (
-    <div className="glass rounded-2xl p-5">
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <span className="grid h-6 w-6 place-items-center rounded-md" style={{ background: `color-mix(in oklab, ${tint} 22%, transparent)`, color: tint }}>
-          <Icon className="h-3.5 w-3.5" />
-        </span>
-        {label}
-      </div>
-      <div className="mt-3 text-2xl font-semibold tracking-tight">{value}</div>
-    </div>
-  );
-}
+      {/* Quick actions */}
+      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl sm:p-6">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Quick actions</p>
+            <h2 className="mt-2 text-xl font-semibold">Start a workflow</h2>
+          </div>
+        </div>
 
-function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { label: string; className: string }> = {
-    planning: { label: "Planning", className: "bg-muted text-muted-foreground" },
-    awaiting_approval: { label: "Awaiting approval", className: "bg-warning/15 text-warning" },
-    running: { label: "Running", className: "bg-primary/15 text-primary" },
-    completed: { label: "Completed", className: "bg-success/15 text-success" },
-    cancelled: { label: "Cancelled", className: "bg-muted text-muted-foreground" },
-    failed: { label: "Failed", className: "bg-destructive/15 text-destructive" },
-  };
-  const s = map[status] ?? map.planning;
-  return <Badge className={`rounded-full border-0 ${s.className}`}>{s.label}</Badge>;
-}
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {quickActions.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className="group flex items-center justify-between rounded-2xl border border-white/10 bg-[#0B0D12] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-white/15 hover:bg-white/[0.05]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C5CFF]/20 to-[#3AA7FF]/20">
+                  <item.icon className="h-5 w-5 text-white/85" />
+                </div>
+                <div>
+                  <p className="font-medium">{item.label}</p>
+                  <p className="text-xs text-white/45">Open workflow</p>
+                </div>
+              </div>
+              <ArrowRight className="h-4 w-4 text-white/35 transition group-hover:translate-x-0.5 group-hover:text-white/70" />
+            </Link>
+          ))}
+        </div>
+      </section>
 
-function ScheduleItem({ title, time }: { title: string; time: string }) {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary">
-        <Clock className="h-4 w-4" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{title}</div>
-        <div className="text-xs text-muted-foreground">{time}</div>
-      </div>
+      <section className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
+        {/* Missions */}
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl sm:p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-white/40">Mission center</p>
+              <h2 className="mt-2 text-xl font-semibold">Recent missions</h2>
+            </div>
+            <Link to="/missions" className="text-sm text-white/55 transition hover:text-white">
+              View all
+            </Link>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {missions.map((mission) => (
+              <div
+                key={mission.title}
+                className="rounded-2xl border border-white/10 bg-[#0B0D12] p-4 transition hover:border-white/15"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="font-medium">{mission.title}</p>
+                    <p className="mt-1 text-sm text-white/45">{mission.time}</p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-white/60">{mission.status}</span>
+                    {mission.status === "Completed" ? (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                    ) : (
+                      <div className="h-2 w-2 rounded-full bg-amber-400" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/5">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#7C5CFF] to-[#3AA7FF]"
+                    style={{ width: `${mission.progress}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Projects + Apps */}
+        <div className="space-y-6">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl sm:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-white/40">Projects</p>
+                <h2 className="mt-2 text-xl font-semibold">Current workspaces</h2>
+              </div>
+              <Link to="/projects" className="text-sm text-white/55 transition hover:text-white">
+                View all
+              </Link>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {projects.map((project) => (
+                <Link
+                  key={project.name}
+                  to="/projects"
+                  className="block rounded-2xl border border-white/10 bg-[#0B0D12] p-4 transition hover:border-white/15 hover:bg-white/[0.05]"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="font-medium">{project.name}</p>
+                      <p className="mt-1 text-sm text-white/45">{project.meta}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-white/35" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-[#7C5CFF]/10 to-[#3AA7FF]/10 p-5 backdrop-blur-xl sm:p-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Connected apps</p>
+            <h2 className="mt-2 text-xl font-semibold">Available in workspace</h2>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {connectedApps.map((app) => (
+                <span
+                  key={app}
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/75"
+                >
+                  {app}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
