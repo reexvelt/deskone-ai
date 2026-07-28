@@ -67,41 +67,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
     },
-    async register(name, email, password) {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name },
-          emailRedirectTo: `${window.location.origin}/`,
-        },
-      });
-      if (error) throw error;
- {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
+ async register(name, email, password) {
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
     options: {
-      redirectTo: window.location.origin,
+      data: { name },
+      emailRedirectTo: `${window.location.origin}/`,
     },
   });
 
   if (error) throw error;
 },
-      
-    },,async loginWithGoogle() {
+
+async loginWithGoogle() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin,
+      redirectTo: `${window.location.origin}/`,
     },
   });
 
   if (error) throw error;
-}
-      });
-      if (result.error) throw result.error;
-    },
-    async sendPasswordReset(email) {
+},
+
+async sendPasswordReset(email) {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
