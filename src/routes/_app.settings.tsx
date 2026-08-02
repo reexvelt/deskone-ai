@@ -32,7 +32,7 @@ function SettingsPage() {
   const pct = Math.round((credits.used / credits.total) * 100);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">Preferences, billing, and workspace controls.</p>

@@ -42,7 +42,7 @@ function ModelsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-5xl">
       <div className="mb-10">
         <h1 className="text-3xl font-semibold tracking-tight">AI Models</h1>
         <p className="mt-1 text-sm text-muted-foreground">

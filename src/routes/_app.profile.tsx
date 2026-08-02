@@ -29,7 +29,7 @@ function ProfilePage() {
   const initials = (user?.name ?? "U").split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Profile</h1>
         <p className="mt-1 text-sm text-muted-foreground">Your identity across AnchorSpace.</p>

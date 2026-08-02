@@ -40,7 +40,7 @@ function IntegrationsPage() {
   const needsAttention = integrations.filter((i) => i.connected && i.authStatus !== "healthy").length;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-6xl">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Integrations</div>

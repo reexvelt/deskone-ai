@@ -39,7 +39,7 @@ function WorkspacePage() {
   const connectedApps = integrations.filter((i) => i.connected).map((i) => i.name);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-4xl">
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Workspace Memory</h1>
