@@ -132,7 +132,7 @@ function IntegrationCard({
       />
       <div className="relative flex items-start gap-4">
         <div
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-semibold text-white"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-semibold text-primary-foreground"
           style={{ background: `linear-gradient(135deg, ${i.accent ?? "#3B82F6"}, ${i.accent ?? "#3B82F6"}cc)` }}
         >
           {i.name[0]}
