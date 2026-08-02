@@ -36,7 +36,7 @@ function IntegrationsPage() {
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Integrations</div>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Connected apps</h1>
           <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-            Production-ready services DeskOne can operate on your behalf.
+            Production-ready services AnchorSpace can operate on your behalf.
           </p>
         </div>
         <div className="flex items-center gap-2">

@@ -26,7 +26,7 @@ function RegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      toast.success("Welcome to DeskOne");
+      toast.success("Welcome to AnchorSpace");
       navigate({ to: "/home" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Registration failed");

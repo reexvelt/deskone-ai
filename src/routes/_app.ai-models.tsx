@@ -36,7 +36,7 @@ function ModelsPage() {
       <div className="mb-10">
         <h1 className="text-3xl font-semibold tracking-tight">AI Models</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Configure providers, pick a default, and choose which models DeskOne routes missions through.
+          Configure providers, pick a default, and choose which models AnchorSpace routes missions through.
         </p>
       </div>
 
@@ -125,7 +125,7 @@ function ModelsPage() {
       </section>
 
       <section>
-        <div className="mb-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">DeskOne models</div>
+        <div className="mb-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">AnchorSpace models</div>
         <div className="space-y-3">
           {models.map((m) => {
             const Icon = iconMap[m.tag];

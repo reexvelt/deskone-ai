@@ -410,7 +410,7 @@ function ProjectWorkspace() {
             </div>
             <Textarea
               defaultValue={project.notes ?? ""}
-              placeholder="Anything DeskOne should remember for this project — audience, tone, constraints…"
+              placeholder="Anything AnchorSpace should remember for this project — audience, tone, constraints…"
               className="min-h-[200px] rounded-xl"
               onBlur={(e) => {
                 if (e.target.value !== (project.notes ?? "")) {

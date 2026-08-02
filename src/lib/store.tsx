@@ -413,11 +413,11 @@ const seedIntegrations = (): Integration[] => {
 };
 
 const seedModels = (): AIModelInfo[] => [
-  { id: "orion", name: "Orion 1", provider: "DeskOne", description: "Balanced reasoning model.", enabled: true, tag: "reasoning" },
-  { id: "orion-pro", name: "Orion Pro", provider: "DeskOne", description: "Deep planning and long context.", enabled: true, tag: "reasoning" },
-  { id: "quartz", name: "Quartz", provider: "DeskOne", description: "Ultra-fast utility model.", enabled: true, tag: "fast" },
-  { id: "muse", name: "Muse", provider: "DeskOne", description: "Creative writing and copy.", enabled: false, tag: "creative" },
-  { id: "lens", name: "Lens", provider: "DeskOne", description: "Vision and screenshots.", enabled: false, tag: "vision" },
+  { id: "orion", name: "Orion 1", provider: "AnchorSpace", description: "Balanced reasoning model.", enabled: true, tag: "reasoning" },
+  { id: "orion-pro", name: "Orion Pro", provider: "AnchorSpace", description: "Deep planning and long context.", enabled: true, tag: "reasoning" },
+  { id: "quartz", name: "Quartz", provider: "AnchorSpace", description: "Ultra-fast utility model.", enabled: true, tag: "fast" },
+  { id: "muse", name: "Muse", provider: "AnchorSpace", description: "Creative writing and copy.", enabled: false, tag: "creative" },
+  { id: "lens", name: "Lens", provider: "AnchorSpace", description: "Vision and screenshots.", enabled: false, tag: "vision" },
 ];
 
 const seedProviders = (): AIProvider[] => [
@@ -428,8 +428,8 @@ const seedProviders = (): AIProvider[] => [
 ];
 
 const seedWorkspace = (): WorkspaceMemory => ({
-  workspaceName: "DeskOne HQ",
-  brandName: "DeskOne",
+  workspaceName: "AnchorSpace HQ",
+  brandName: "AnchorSpace",
   brandColors: ["#3B82F6", "#7C5CFF", "#090B10"],
   writingTone: "Confident, minimal, premium. Short sentences.",
   preferredModel: "Orion Pro",
@@ -520,7 +520,7 @@ const HASHTAG_POOLS: Record<string, string[]> = {
 };
 
 export function generateAssetBody(kind: AssetKind, subject: string, workspace?: WorkspaceMemory): string {
-  const brand = workspace?.brandName ?? "DeskOne";
+  const brand = workspace?.brandName ?? "AnchorSpace";
   const s = subject.trim() || "your content";
   switch (kind) {
     case "script":

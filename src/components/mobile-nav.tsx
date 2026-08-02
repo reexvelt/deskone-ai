@@ -94,7 +94,7 @@ export function MobileBottomNav() {
                 <div className="flex items-center gap-3">
                   <Logo size={32} />
                   <div className="leading-tight">
-                    <div className="text-sm font-semibold">DeskOne</div>
+                    <div className="text-sm font-semibold">AnchorSpace</div>
                     <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                       Execution
                     </div>

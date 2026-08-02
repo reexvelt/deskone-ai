@@ -49,7 +49,7 @@ export function AppSidebar({ collapsed, onToggle }: { collapsed: boolean; onTogg
         <Logo size={32} />
         {!collapsed && (
           <div className="leading-tight">
-            <div className="text-sm font-semibold tracking-tight">DeskOne</div>
+            <div className="text-sm font-semibold tracking-tight">AnchorSpace</div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Execution</div>
           </div>
         )}

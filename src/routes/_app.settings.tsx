@@ -31,7 +31,7 @@ function SettingsPage() {
       <div className="space-y-4">
         <Card className="border-border bg-card p-6">
           <div className="text-sm font-semibold">Mission execution</div>
-          <div className="mt-1 text-xs text-muted-foreground">Control how DeskOne executes on your behalf.</div>
+          <div className="mt-1 text-xs text-muted-foreground">Control how AnchorSpace executes on your behalf.</div>
           <Row label="Auto-approve low-risk missions" description="Skip approval for missions under 5 steps and no external send.">
             <Switch checked={autoApprove} onCheckedChange={setAutoApprove} />
           </Row>
@@ -55,14 +55,14 @@ function SettingsPage() {
 
         <Card className="border-border bg-card p-6">
           <div className="text-sm font-semibold">Privacy</div>
-          <Row label="Anonymous usage analytics" description="Help improve DeskOne without sharing personal data.">
+          <Row label="Anonymous usage analytics" description="Help improve AnchorSpace without sharing personal data.">
             <Switch checked={analytics} onCheckedChange={setAnalytics} />
           </Row>
         </Card>
 
         <Card className="border-destructive/30 bg-card p-6">
           <div className="text-sm font-semibold text-destructive">Danger zone</div>
-          <Row label="Sign out" description="End your DeskOne session on this device.">
+          <Row label="Sign out" description="End your AnchorSpace session on this device.">
             <Button
               variant="outline"
               className="rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"

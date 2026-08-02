@@ -34,7 +34,7 @@ function WorkspacePage() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Workspace Memory</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Context DeskOne remembers across every mission — brand, tone, hours, and more.
+            Context AnchorSpace remembers across every mission — brand, tone, hours, and more.
           </p>
         </div>
         <Button

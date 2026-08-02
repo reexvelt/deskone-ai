@@ -49,7 +49,7 @@
 :root {
   --radius: 0.875rem;
 
-  /* DeskOne palette — dark first */
+  /* AnchorSpace palette — dark first */
   --background: oklch(0.16 0.02 260);       /* #090B10 approx */
   --foreground: oklch(0.99 0 0);            /* #FFFFFF */
   --surface: oklch(0.22 0.02 260);          /* #141922 */

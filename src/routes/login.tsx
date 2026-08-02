@@ -39,10 +39,10 @@ function LoginPage() {
   return (
     <AuthShell
       title="Welcome back"
-      subtitle="Sign in to your DeskOne workspace."
+      subtitle="Sign in to your AnchorSpace workspace."
       footer={
         <>
-          New to DeskOne?{" "}
+          New to AnchorSpace?{" "}
           <Link to="/register" className="text-primary hover:underline">
             Create an account
           </Link>

@@ -22,7 +22,7 @@ function ProfilePage() {
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Profile</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Your identity across DeskOne.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Your identity across AnchorSpace.</p>
       </div>
 
       <Card className="border-border bg-card p-6">
