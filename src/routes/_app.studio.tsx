@@ -415,11 +415,20 @@ function StudioPage() {
             </div>
 
             <div className="mt-4 whitespace-pre-wrap rounded-2xl border border-border bg-surface/50 p-4 text-sm leading-7 text-foreground">
-              {outputTab === "script" && outputs.script}
-              {outputTab === "caption" && outputs.caption}
-              {outputTab === "hashtags" && outputs.hashtags}
-              {outputTab === "headline" && outputs.headline}
+              {!hasOutputs ? (
+                <span className="text-muted-foreground">
+                  Nothing generated yet. Upload your media, attach a project, then choose “Generate assets”.
+                </span>
+              ) : (
+                <>
+                  {outputTab === "script" && outputs.script}
+                  {outputTab === "caption" && outputs.caption}
+                  {outputTab === "hashtags" && outputs.hashtags}
+                  {outputTab === "headline" && outputs.headline}
+                </>
+              )}
             </div>
+
 
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               <button
