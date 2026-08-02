@@ -34,22 +34,10 @@ export const Route = createFileRoute("/_app/studio")({
 
 type OutputTab = "script" | "caption" | "hashtags" | "headline";
 
-const demoProjects = [
-  "Food Creator Workspace",
-  "Personal Brand Campaign",
-  "Client Content Sprint",
-];
-
-const demoMissions = [
-  "Create YouTube video",
-  "Launch Instagram reel",
-  "Build content pack",
-  "Food review campaign",
-];
-
 function StudioPage() {
-  const [project, setProject] = useState(demoProjects[0]);
-  const [mission, setMission] = useState(demoMissions[0]);
+  const { projects, missions, addAsset } = useStore();
+  const [projectId, setProjectId] = useState<string>(projects[0]?.id ?? "");
+  const [missionId, setMissionId] = useState<string>("none");
   const [files, setFiles] = useState<File[]>([]);
   const [outputTab, setOutputTab] = useState<OutputTab>("script");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -57,14 +45,18 @@ function StudioPage() {
   const [scheduledDate, setScheduledDate] = useState("Friday, 6:00 PM");
   const [publishMessage, setPublishMessage] = useState("");
   const [outputs, setOutputs] = useState({
-    script:
-      "Hook: In this video, I am showing you how to make a quick and satisfying meal prep in under 10 minutes.\n\nIntro: Today I am breaking down a simple, creator-friendly workflow for cooking, filming, and posting faster...\n\nOutro: If you want more content like this, follow for practical food creator tips.",
-    caption:
-      "Cooking made simple. Filming made faster. Posting made easier. 🍲✨\n\nThis is the kind of workflow creators need when they want to stay consistent without wasting time.\n\n#FoodCreator #MealPrep #ContentCreation #CreatorWorkflow #AnchorSpace",
-    hashtags:
-      "#FoodCreator #MealPrep #ContentCreator #CookingVideo #RecipeCreator #CreatorTools #AIWorkspace #AnchorSpace",
-    headline: "How to create food content faster without losing quality",
+    script: "",
+    caption: "",
+    hashtags: "",
+    headline: "",
   });
+
+  const activeProject = projects.find((p) => p.id === projectId);
+  const project = activeProject?.name ?? "No project selected";
+  const projectMissions = missions.filter((m) => !projectId || m.projectId === projectId);
+  const activeMission = missions.find((m) => m.id === missionId);
+  const mission = activeMission?.title ?? "Not linked";
+  const hasOutputs = Boolean(outputs.script || outputs.caption || outputs.hashtags || outputs.headline);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -87,22 +79,48 @@ function StudioPage() {
 
     await new Promise((resolve) => setTimeout(resolve, 1200));
 
+    const topic = files[0]?.name.replace(/\.[^.]+$/, "") ?? project;
     setOutputs({
-      script:
-        "Hook: What if your next food video was planned, written, and organized in one workspace?\n\nIntro: In this mission, AnchorSpace helps you turn raw content into a clean creator workflow.\n\nMain: Upload your clip, organize your project, generate your copy, and keep every asset in one place.\n\nOutro: One space for planning, creating, and publishing.",
-      caption:
-        "Every good creator needs a better workflow.\n\nAnchorSpace helps you organize your video, generate captions, and prepare your next post in one place.\n\nCreate faster. Stay organized. Publish with confidence.",
-      hashtags:
-        "#AnchorSpace #FoodCreator #ContentCreators #CreatorEconomy #VideoEditing #InstagramReel #YouTubeShorts #CreatorWorkflow",
-      headline: "One workspace for creators who want to move faster",
+      script: `Hook: Here is how ${topic} comes together end to end.\n\nIntro: In this mission AnchorSpace turns your raw material into a publish-ready piece.\n\nMain: Upload the media, attach it to a project, generate the copy, and keep every asset in one place.\n\nOutro: One workspace for planning, creating, and publishing.`,
+      caption: `Every good creator needs a better workflow.\n\nAnchorSpace organizes ${topic}, writes the captions, and prepares the next post in one place.\n\nCreate faster. Stay organized. Publish with confidence.`,
+      hashtags: "#AnchorSpace #ContentCreators #CreatorEconomy #CreatorWorkflow #ShortForm #Marketing",
+      headline: `One workspace for creators shipping ${topic}`,
     });
 
     setIsGenerating(false);
   };
 
   const approveOutputs = () => {
+    if (!hasOutputs) {
+      setPublishMessage("Generate assets before approving.");
+      return;
+    }
+    if (!projectId) {
+      setPublishMessage("Attach this work to a project first.");
+      return;
+    }
+
+    const kinds = [
+      { kind: "script" as const, title: "Script", body: outputs.script },
+      { kind: "caption" as const, title: "Caption", body: outputs.caption },
+      { kind: "hashtag" as const, title: "Hashtags", body: outputs.hashtags },
+      { kind: "title" as const, title: "Headline", body: outputs.headline },
+    ];
+    kinds.forEach((k) => {
+      if (!k.body) return;
+      addAsset({
+        projectId,
+        missionId: missionId === "none" ? undefined : missionId,
+        kind: k.kind,
+        title: k.title,
+        body: k.body,
+        status: "approved",
+        mediaName: files[0]?.name,
+      });
+    });
+
     setApproved(true);
-    setPublishMessage("Outputs approved and ready for publishing.");
+    setPublishMessage(`Approved and saved to ${project}.`);
   };
 
   const schedulePublish = () => {
@@ -122,6 +140,7 @@ function StudioPage() {
 
     setPublishMessage("Publishing flow prepared. Connect the platform account to complete publishing.");
   };
+
 
   return (
     <div className="space-y-6 pb-10">
