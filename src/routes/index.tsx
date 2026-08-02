@@ -138,43 +138,43 @@ function LandingPage() {
 
   if (!ready) {
     return (
-      <div className="grid min-h-screen place-items-center bg-[#090B10] text-white">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-white border-t-transparent" />
+      <div className="grid min-h-screen place-items-center bg-background text-foreground">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-border border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#090B10] text-white">
+    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-[-10%] top-[-10%] h-80 w-80 rounded-full bg-[#7C5CFF]/25 blur-3xl" />
-        <div className="absolute right-[-10%] top-[15%] h-80 w-80 rounded-full bg-[#3AA7FF]/20 blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[30%] h-80 w-80 rounded-full bg-[#22C55E]/10 blur-3xl" />
+        <div className="absolute left-[-10%] top-[-10%] h-80 w-80 rounded-full bg-secondary/25 blur-3xl" />
+        <div className="absolute right-[-10%] top-[15%] h-80 w-80 rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[30%] h-80 w-80 rounded-full bg-success/10 blur-3xl" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-5 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between gap-4 rounded-full border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-xl sm:px-6">
+        <header className="flex items-center justify-between gap-4 rounded-full border border-border bg-surface/60 px-4 py-3 backdrop-blur-xl sm:px-6">
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C5CFF] to-[#3AA7FF] shadow-[0_0_30px_rgba(124,92,255,0.35)]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary to-primary shadow-[0_0_30px_rgba(124,92,255,0.35)]">
               <span className="text-lg font-black">A</span>
             </div>
             <div>
-              <p className="text-sm font-semibold tracking-[0.3em] text-white/60">ANCHORSPACE</p>
-              <p className="text-xs text-white/40">Create. Connect. Command.</p>
+              <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground">ANCHORSPACE</p>
+              <p className="text-xs text-muted-foreground">Create. Connect. Command.</p>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-6 text-sm text-white/70 md:flex">
-            <a href="#features" className="transition hover:text-white">
+          <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+            <a href="#features" className="transition hover:text-foreground">
               Features
             </a>
-            <a href="#workflow" className="transition hover:text-white">
+            <a href="#workflow" className="transition hover:text-foreground">
               Workflow
             </a>
-            <a href="#pricing" className="transition hover:text-white">
+            <a href="#pricing" className="transition hover:text-foreground">
               Pricing
             </a>
-            <a href="#faq" className="transition hover:text-white">
+            <a href="#faq" className="transition hover:text-foreground">
               FAQ
             </a>
           </nav>
@@ -182,13 +182,13 @@ function LandingPage() {
           <div className="flex items-center gap-2">
             <Link
               to="/login"
-              className="rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-white/80 transition hover:border-white/20 hover:bg-white/5"
+              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-surface/60"
             >
               Log in
             </Link>
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#7C5CFF] to-[#3AA7FF] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(58,167,255,0.18)] transition hover:translate-y-[-1px]"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-secondary to-primary px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_30px_rgba(58,167,255,0.18)] transition hover:translate-y-[-1px]"
             >
               Get Early Access <ArrowRight className="h-4 w-4" />
             </Link>
@@ -197,7 +197,7 @@ function LandingPage() {
 
         <section className="grid items-center gap-10 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
           <div className="max-w-2xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 backdrop-blur">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-2 text-sm text-foreground backdrop-blur">
               <span className="flex h-2 w-2 rounded-full bg-emerald-400" />
               Launching soon for creators and freelancers
             </div>
@@ -206,7 +206,7 @@ function LandingPage() {
               The intelligent workspace for creators and freelancers.
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-8 text-white/65 sm:text-lg">
+            <p className="mt-6 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
               Plan projects. Create content. Organize files. Generate AI-powered ideas. Manage clients.
               Publish with confidence — all from one premium workspace.
             </p>
@@ -214,13 +214,13 @@ function LandingPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#7C5CFF] to-[#3AA7FF] px-6 py-3 text-sm font-semibold text-white shadow-[0_15px_40px_rgba(124,92,255,0.25)] transition hover:translate-y-[-2px]"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-secondary to-primary px-6 py-3 text-sm font-semibold text-foreground shadow-[0_15px_40px_rgba(124,92,255,0.25)] transition hover:translate-y-[-2px]"
               >
                 Get Early Access <ChevronRight className="h-4 w-4" />
               </Link>
               <a
                 href="#workflow"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/85 backdrop-blur transition hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-surface/60 px-6 py-3 text-sm font-semibold text-foreground backdrop-blur transition hover:bg-surface"
               >
                 <PlayCircle className="h-4 w-4" />
                 See how it works
@@ -234,31 +234,31 @@ function LandingPage() {
                 ["Projects", "All in one"],
                 ["AI", "Mission-based"],
               ].map(([title, sub]) => (
-                <div key={title} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+                <div key={title} className="rounded-2xl border border-border bg-surface/60 p-4 backdrop-blur">
                   <p className="text-sm font-semibold">{title}</p>
-                  <p className="mt-1 text-xs text-white/50">{sub}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="relative">
-            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[#7C5CFF]/20 to-[#3AA7FF]/20 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#11141B]/90 shadow-2xl backdrop-blur-xl">
-              <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-secondary/20 to-primary/20 blur-3xl" />
+            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-surface/90 shadow-2xl backdrop-blur-xl">
+              <div className="flex items-center justify-between border-b border-border px-5 py-4">
                 <div>
                   <p className="text-sm font-semibold">AnchorSpace Studio</p>
-                  <p className="text-xs text-white/45">Mission command for modern creators</p>
+                  <p className="text-xs text-muted-foreground">Mission command for modern creators</p>
                 </div>
-                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60">
+                <div className="rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted-foreground">
                   Live workspace
                 </div>
               </div>
 
               <div className="space-y-4 p-5">
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-                  <p className="text-sm text-white/50">What would you like to accomplish today?</p>
-                  <div className="mt-4 rounded-2xl border border-white/10 bg-[#0B0D12] p-4 text-sm text-white/85">
+                <div className="rounded-3xl border border-border bg-surface/60 p-5">
+                  <p className="text-sm text-muted-foreground">What would you like to accomplish today?</p>
+                  <div className="mt-4 rounded-2xl border border-border bg-background p-4 text-sm text-foreground">
                     Create a YouTube video about meal prep, generate captions, save to Drive, and schedule it
                     for Friday.
                   </div>
@@ -266,7 +266,7 @@ function LandingPage() {
                     {["Generate script", "Create captions", "Save assets", "Schedule publish"].map((item) => (
                       <span
                         key={item}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70"
+                        className="rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted-foreground"
                       >
                         {item}
                       </span>
@@ -281,10 +281,10 @@ function LandingPage() {
                     ["Files organized", "18 assets", Upload],
                     ["Next publish", "Friday 6 PM", CalendarDays],
                   ].map(([label, value, Icon]) => (
-                    <div key={label as string} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <div key={label as string} className="rounded-2xl border border-border bg-surface/60 p-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-xs uppercase tracking-[0.2em] text-white/40">{label as string}</p>
-                        <Icon className="h-4 w-4 text-white/50" />
+                        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{label as string}</p>
+                        <Icon className="h-4 w-4 text-muted-foreground" />
                       </div>
                       <p className="mt-4 text-xl font-bold">{value as string}</p>
                     </div>
@@ -297,7 +297,7 @@ function LandingPage() {
 
         <section id="features" className="py-10">
           <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/45">Features</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Features</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
               Built to reduce switching, save time, and keep work moving.
             </h2>
@@ -307,13 +307,13 @@ function LandingPage() {
             {features.map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
-                className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)] backdrop-blur transition hover:-translate-y-1 hover:border-white/15"
+                className="rounded-[1.75rem] border border-border bg-surface/50 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)] backdrop-blur transition hover:-translate-y-1 hover:border-border"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7C5CFF]/20 to-[#3AA7FF]/20 text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary/20 to-primary/20 text-foreground">
                   <Icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-7 text-white/60">{desc}</p>
+                <p className="mt-2 text-sm leading-7 text-muted-foreground">{desc}</p>
               </div>
             ))}
           </div>
@@ -321,7 +321,7 @@ function LandingPage() {
 
         <section id="workflow" className="py-20">
           <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/45">Workflow</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Workflow</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
               One workspace. One flow. Everything connected.
             </h2>
@@ -329,10 +329,10 @@ function LandingPage() {
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {steps.map((step) => (
-              <div key={step.number} className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6">
-                <p className="text-xs font-semibold tracking-[0.4em] text-white/35">{step.number}</p>
+              <div key={step.number} className="rounded-[1.75rem] border border-border bg-surface/50 p-6">
+                <p className="text-xs font-semibold tracking-[0.4em] text-muted-foreground">{step.number}</p>
                 <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
-                <p className="mt-2 text-sm leading-7 text-white/60">{step.text}</p>
+                <p className="mt-2 text-sm leading-7 text-muted-foreground">{step.text}</p>
               </div>
             ))}
           </div>
@@ -340,7 +340,7 @@ function LandingPage() {
 
         <section id="pricing" className="py-20">
           <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/45">Pricing</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Pricing</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
               Simple plans for creators at every stage.
             </h2>
@@ -352,24 +352,24 @@ function LandingPage() {
                 key={plan.name}
                 className={`rounded-[2rem] border p-7 backdrop-blur ${
                   plan.name === "Plus"
-                    ? "border-[#7C5CFF]/35 bg-[#7C5CFF]/10 shadow-[0_0_50px_rgba(124,92,255,0.12)]"
-                    : "border-white/10 bg-white/[0.04]"
+                    ? "border-secondary/35 bg-secondary/10 shadow-[0_0_50px_rgba(124,92,255,0.12)]"
+                    : "border-border bg-surface/50"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">{plan.name}</h3>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60">
+                  <span className="rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted-foreground">
                     {plan.badge}
                   </span>
                 </div>
                 <p className="mt-5 text-4xl font-black">
                   {plan.price}
-                  <span className="text-sm font-medium text-white/45"> / month</span>
+                  <span className="text-sm font-medium text-muted-foreground"> / month</span>
                 </p>
 
                 <ul className="mt-6 space-y-3">
                   {plan.perks.map((perk) => (
-                    <li key={perk} className="flex items-center gap-3 text-sm text-white/70">
+                    <li key={perk} className="flex items-center gap-3 text-sm text-muted-foreground">
                       <BadgeCheck className="h-4 w-4 text-emerald-400" />
                       {perk}
                     </li>
@@ -380,8 +380,8 @@ function LandingPage() {
                   to="/register"
                   className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition ${
                     plan.name === "Plus"
-                      ? "bg-white text-[#090B10] hover:bg-white/90"
-                      : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
+                      ? "bg-foreground text-background hover:bg-foreground"
+                      : "border border-border bg-surface/60 text-foreground hover:bg-surface"
                   }`}
                 >
                   Get Started <ArrowRight className="h-4 w-4" />
@@ -393,7 +393,7 @@ function LandingPage() {
 
         <section id="faq" className="py-10">
           <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/45">FAQ</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">FAQ</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
               Questions creators will ask before they join.
             </h2>
@@ -401,24 +401,24 @@ function LandingPage() {
 
           <div className="grid gap-4 lg:grid-cols-2">
             {faqs.map((item) => (
-              <div key={item.q} className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6">
+              <div key={item.q} className="rounded-[1.75rem] border border-border bg-surface/50 p-6">
                 <h3 className="text-lg font-semibold">{item.q}</h3>
-                <p className="mt-3 text-sm leading-7 text-white/60">{item.a}</p>
+                <p className="mt-3 text-sm leading-7 text-muted-foreground">{item.a}</p>
               </div>
             ))}
           </div>
         </section>
 
         <section className="py-16">
-          <div className="rounded-[2.25rem] border border-white/10 bg-gradient-to-r from-[#7C5CFF]/20 via-white/[0.04] to-[#3AA7FF]/20 p-8 text-center backdrop-blur-xl sm:p-12">
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-white/70">
+          <div className="rounded-[2.25rem] border border-border bg-gradient-to-r from-secondary/20 via-surface/50 to-primary/20 p-8 text-center backdrop-blur-xl sm:p-12">
+            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
               <Sparkles className="h-4 w-4" />
               Launching soon
             </p>
             <h2 className="mt-6 text-3xl font-black tracking-tight sm:text-5xl">
               Ready to create without the chaos?
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/65 sm:text-base">
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
               Join the first creators building with AnchorSpace and experience a workspace designed to help you stay
               organized, create faster, and command your workflow from one place.
             </p>
@@ -426,13 +426,13 @@ function LandingPage() {
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#090B10] transition hover:bg-white/90"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition hover:bg-foreground"
               >
                 Get Early Access <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-surface/60 px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface"
               >
                 Sign in
               </Link>
@@ -440,20 +440,20 @@ function LandingPage() {
           </div>
         </section>
 
-        <footer className="border-t border-white/10 py-8 text-sm text-white/45">
+        <footer className="border-t border-border py-8 text-sm text-muted-foreground">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <p>© {new Date().getFullYear()} AnchorSpace. All rights reserved.</p>
             <div className="flex flex-wrap gap-4">
-              <a href="#features" className="transition hover:text-white/70">
+              <a href="#features" className="transition hover:text-muted-foreground">
                 Features
               </a>
-              <a href="#pricing" className="transition hover:text-white/70">
+              <a href="#pricing" className="transition hover:text-muted-foreground">
                 Pricing
               </a>
-              <a href="#faq" className="transition hover:text-white/70">
+              <a href="#faq" className="transition hover:text-muted-foreground">
                 FAQ
               </a>
-              <Link to="/login" className="transition hover:text-white/70">
+              <Link to="/login" className="transition hover:text-muted-foreground">
                 Login
               </Link>
             </div>
