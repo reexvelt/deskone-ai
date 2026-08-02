@@ -251,13 +251,14 @@ function StudioPage() {
               <label className="space-y-2">
                 <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Project</span>
                 <select
-                  value={project}
-                  onChange={(e) => setProject(e.target.value)}
+                  value={projectId}
+                  onChange={(e) => setProjectId(e.target.value)}
                   className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none"
                 >
-                  {demoProjects.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
+                  {projects.length === 0 && <option value="">No projects yet</option>}
+                  {projects.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
                     </option>
                   ))}
                 </select>
@@ -266,18 +267,20 @@ function StudioPage() {
               <label className="space-y-2">
                 <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Mission</span>
                 <select
-                  value={mission}
-                  onChange={(e) => setMission(e.target.value)}
+                  value={missionId}
+                  onChange={(e) => setMissionId(e.target.value)}
                   className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none"
                 >
-                  {demoMissions.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
+                  <option value="none">Not linked to a mission</option>
+                  {projectMissions.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.title}
                     </option>
                   ))}
                 </select>
               </label>
             </div>
+
 
             <div className="mt-5 flex flex-wrap gap-2">
               <span className="rounded-full border border-border bg-surface/60 px-3 py-2 text-xs text-muted-foreground">
