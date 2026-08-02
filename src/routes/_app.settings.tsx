@@ -9,6 +9,16 @@ import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/settings")({
+  head: () => ({
+    meta: [
+      { title: "Settings · AnchorSpace" },
+      { name: "description", content: "Control notifications, security and workspace defaults for AnchorSpace." },
+      { property: "og:title", content: "Settings · AnchorSpace" },
+      { property: "og:description", content: "Control notifications, security and workspace defaults for AnchorSpace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: SettingsPage,
 });
 

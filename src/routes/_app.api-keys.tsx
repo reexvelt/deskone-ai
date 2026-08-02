@@ -15,6 +15,16 @@ import { toast } from "sonner";
 import { useStore, type ProviderId } from "@/lib/store";
 
 export const Route = createFileRoute("/_app/api-keys")({
+  head: () => ({
+    meta: [
+      { title: "API Keys · AnchorSpace" },
+      { name: "description", content: "Store and rotate provider API keys securely for your AnchorSpace workspace." },
+      { property: "og:title", content: "API Keys · AnchorSpace" },
+      { property: "og:description", content: "Store and rotate provider API keys securely for your AnchorSpace workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ApiKeysPage,
 });
 

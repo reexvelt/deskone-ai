@@ -19,6 +19,16 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/studio")({
+  head: () => ({
+    meta: [
+      { title: "Content Studio · AnchorSpace" },
+      { name: "description", content: "Turn raw media into captions, scripts and scheduled posts with the AnchorSpace Content Studio." },
+      { property: "og:title", content: "Content Studio · AnchorSpace" },
+      { property: "og:description", content: "Turn raw media into captions, scripts and scheduled posts with the AnchorSpace Content Studio." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: StudioPage,
 });
 

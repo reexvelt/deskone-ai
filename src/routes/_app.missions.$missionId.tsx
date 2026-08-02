@@ -16,6 +16,16 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/missions/$missionId")({
+  head: () => ({
+    meta: [
+      { title: "Mission Detail · AnchorSpace" },
+      { name: "description", content: "Review the execution plan, live timeline, logs and outputs for this mission." },
+      { property: "og:title", content: "Mission Detail · AnchorSpace" },
+      { property: "og:description", content: "Review the execution plan, live timeline, logs and outputs for this mission." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: MissionDetail,
 });
 

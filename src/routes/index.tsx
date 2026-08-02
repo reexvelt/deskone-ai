@@ -18,6 +18,16 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "AnchorSpace · The AI Execution Workspace" },
+      { name: "description", content: "AnchorSpace turns goals into missions: it plans the work, you approve it, and your connected apps execute." },
+      { property: "og:title", content: "AnchorSpace · The AI Execution Workspace" },
+      { property: "og:description", content: "AnchorSpace turns goals into missions: it plans the work, you approve it, and your connected apps execute." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: LandingPage,
 });
 

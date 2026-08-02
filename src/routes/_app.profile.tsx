@@ -9,6 +9,16 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/profile")({
+  head: () => ({
+    meta: [
+      { title: "Profile · AnchorSpace" },
+      { name: "description", content: "Manage your name, avatar and personal workspace preferences." },
+      { property: "og:title", content: "Profile · AnchorSpace" },
+      { property: "og:description", content: "Manage your name, avatar and personal workspace preferences." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ProfilePage,
 });
 

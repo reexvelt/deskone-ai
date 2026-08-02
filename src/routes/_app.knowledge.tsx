@@ -9,6 +9,16 @@ import { Upload, FileText, FileImage, FileSpreadsheet, File, Search, Trash2, Spa
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/knowledge")({
+  head: () => ({
+    meta: [
+      { title: "Knowledge Center · AnchorSpace" },
+      { name: "description", content: "Upload brand documents and references so every mission output stays on-message." },
+      { property: "og:title", content: "Knowledge Center · AnchorSpace" },
+      { property: "og:description", content: "Upload brand documents and references so every mission output stays on-message." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: KnowledgePage,
 });
 

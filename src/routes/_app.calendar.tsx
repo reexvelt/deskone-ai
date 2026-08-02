@@ -2,6 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 
 export const Route = createFileRoute("/_app/calendar")({
+  head: () => ({
+    meta: [
+      { title: "Content Calendar · AnchorSpace" },
+      { name: "description", content: "See every scheduled mission, publish date and deadline on one calendar." },
+      { property: "og:title", content: "Content Calendar · AnchorSpace" },
+      { property: "og:description", content: "See every scheduled mission, publish date and deadline on one calendar." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: CalendarPage,
 });
 

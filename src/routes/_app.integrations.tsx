@@ -10,6 +10,16 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/integrations")({
+  head: () => ({
+    meta: [
+      { title: "Integrations · AnchorSpace" },
+      { name: "description", content: "Connect Drive, Gmail, Notion, YouTube and 20+ tools so AnchorSpace can execute real work." },
+      { property: "og:title", content: "Integrations · AnchorSpace" },
+      { property: "og:description", content: "Connect Drive, Gmail, Notion, YouTube and 20+ tools so AnchorSpace can execute real work." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: IntegrationsPage,
 });
 

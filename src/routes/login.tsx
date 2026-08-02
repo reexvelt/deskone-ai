@@ -8,6 +8,16 @@ import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
+  head: () => ({
+    meta: [
+      { title: "Sign In · AnchorSpace" },
+      { name: "description", content: "Sign in to your AnchorSpace AI execution workspace." },
+      { property: "og:title", content: "Sign In · AnchorSpace" },
+      { property: "og:description", content: "Sign in to your AnchorSpace AI execution workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: LoginPage,
 });
 

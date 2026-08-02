@@ -10,6 +10,16 @@ import { Sparkles, Zap, Palette, Eye, ShieldCheck, ShieldAlert, Loader2, Star, K
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/ai-models")({
+  head: () => ({
+    meta: [
+      { title: "AI Models · AnchorSpace" },
+      { name: "description", content: "Choose and configure the AI models that power your missions, from fast drafting to deep reasoning." },
+      { property: "og:title", content: "AI Models · AnchorSpace" },
+      { property: "og:description", content: "Choose and configure the AI models that power your missions, from fast drafting to deep reasoning." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ModelsPage,
 });
 

@@ -10,6 +10,16 @@ import { MissionComposer } from "@/components/mission-composer";
 import { Search, Rocket } from "lucide-react";
 
 export const Route = createFileRoute("/_app/missions")({
+  head: () => ({
+    meta: [
+      { title: "Missions · AnchorSpace" },
+      { name: "description", content: "Track every AI mission from plan approval through execution and delivered outputs." },
+      { property: "og:title", content: "Missions · AnchorSpace" },
+      { property: "og:description", content: "Track every AI mission from plan approval through execution and delivered outputs." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: MissionsPage,
 });
 

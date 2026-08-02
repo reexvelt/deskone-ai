@@ -8,6 +8,16 @@ import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/reset-password")({
+  head: () => ({
+    meta: [
+      { title: "Set New Password · AnchorSpace" },
+      { name: "description", content: "Choose a new password for your AnchorSpace account." },
+      { property: "og:title", content: "Set New Password · AnchorSpace" },
+      { property: "og:description", content: "Choose a new password for your AnchorSpace account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ResetPasswordPage,
 });
 

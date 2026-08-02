@@ -7,6 +7,16 @@ import { Bell, CheckCircle2, AlertTriangle, Zap, Plug, Sparkles, Archive, Check 
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/notifications")({
+  head: () => ({
+    meta: [
+      { title: "Notifications · AnchorSpace" },
+      { name: "description", content: "Approvals, completed missions and integration alerts in one inbox." },
+      { property: "og:title", content: "Notifications · AnchorSpace" },
+      { property: "og:description", content: "Approvals, completed missions and integration alerts in one inbox." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: NotificationsPage,
 });
 

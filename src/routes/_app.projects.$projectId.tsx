@@ -18,6 +18,16 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/projects/$projectId")({
+  head: () => ({
+    meta: [
+      { title: "Project Workspace · AnchorSpace" },
+      { name: "description", content: "Missions, assets, files, timeline and notes for this project in one workspace." },
+      { property: "og:title", content: "Project Workspace · AnchorSpace" },
+      { property: "og:description", content: "Missions, assets, files, timeline and notes for this project in one workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ProjectWorkspace,
 });
 
