@@ -18,7 +18,7 @@ export function AuthShell({
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6 py-12">
         <Link to="/" className="mb-10 flex items-center gap-2">
           <Logo />
-          <span className="text-lg font-semibold tracking-tight">DeskOne</span>
+          <span className="text-lg font-semibold tracking-tight">AnchorSpace</span>
         </Link>
         <h1 className="text-3xl font-semibold tracking-tight text-gradient">{title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>

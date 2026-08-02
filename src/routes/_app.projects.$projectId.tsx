@@ -18,6 +18,16 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/projects/$projectId")({
+  head: () => ({
+    meta: [
+      { title: "Project Workspace · AnchorSpace" },
+      { name: "description", content: "Missions, assets, files, timeline and notes for this project in one workspace." },
+      { property: "og:title", content: "Project Workspace · AnchorSpace" },
+      { property: "og:description", content: "Missions, assets, files, timeline and notes for this project in one workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ProjectWorkspace,
 });
 
@@ -65,7 +75,7 @@ function ProjectWorkspace() {
 
   if (!project) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-16 text-center md:px-8">
+      <div className="mx-auto w-full max-w-4xl py-16 text-center">
         <div className="text-lg font-semibold">Project not found</div>
         <Link to="/projects" className="mt-3 inline-block text-sm text-primary hover:underline">Back to projects</Link>
       </div>
@@ -119,7 +129,7 @@ function ProjectWorkspace() {
   ].sort((a, b) => b.ts - a.ts);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-10 md:px-8">
+    <div className="mx-auto w-full max-w-6xl">
       <Link to="/projects" className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> All projects
       </Link>
@@ -410,7 +420,7 @@ function ProjectWorkspace() {
             </div>
             <Textarea
               defaultValue={project.notes ?? ""}
-              placeholder="Anything DeskOne should remember for this project — audience, tone, constraints…"
+              placeholder="Anything AnchorSpace should remember for this project — audience, tone, constraints…"
               className="min-h-[200px] rounded-xl"
               onBlur={(e) => {
                 if (e.target.value !== (project.notes ?? "")) {

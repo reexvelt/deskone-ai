@@ -16,6 +16,16 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/missions/$missionId")({
+  head: () => ({
+    meta: [
+      { title: "Mission Detail · AnchorSpace" },
+      { name: "description", content: "Review the execution plan, live timeline, logs and outputs for this mission." },
+      { property: "og:title", content: "Mission Detail · AnchorSpace" },
+      { property: "og:description", content: "Review the execution plan, live timeline, logs and outputs for this mission." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: MissionDetail,
 });
 
@@ -27,7 +37,7 @@ function MissionDetail() {
 
   if (!mission) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-16 text-center md:px-8">
+      <div className="mx-auto w-full max-w-4xl py-16 text-center">
         <div className="text-lg font-semibold">Mission not found</div>
         <Link to="/missions" className="mt-3 inline-block text-sm text-primary hover:underline">
           Back to missions
@@ -49,7 +59,7 @@ function MissionDetail() {
     : "—";
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-6xl">
       <Link to="/missions" className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" /> All missions
       </Link>

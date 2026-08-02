@@ -15,6 +15,16 @@ import { toast } from "sonner";
 import { useStore, type ProviderId } from "@/lib/store";
 
 export const Route = createFileRoute("/_app/api-keys")({
+  head: () => ({
+    meta: [
+      { title: "API Keys · AnchorSpace" },
+      { name: "description", content: "Store and rotate provider API keys securely for your AnchorSpace workspace." },
+      { property: "og:title", content: "API Keys · AnchorSpace" },
+      { property: "og:description", content: "Store and rotate provider API keys securely for your AnchorSpace workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ApiKeysPage,
 });
 
@@ -51,7 +61,7 @@ function ApiKeysPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-5xl">
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">API Keys</h1>

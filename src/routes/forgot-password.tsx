@@ -8,6 +8,16 @@ import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/forgot-password")({
+  head: () => ({
+    meta: [
+      { title: "Reset Password · AnchorSpace" },
+      { name: "description", content: "Request a secure password reset link for your AnchorSpace account." },
+      { property: "og:title", content: "Reset Password · AnchorSpace" },
+      { property: "og:description", content: "Request a secure password reset link for your AnchorSpace account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ForgotPage,
 });
 

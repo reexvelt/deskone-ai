@@ -10,6 +10,16 @@ import { useStore, type WorkspaceMemory } from "@/lib/store";
 import { Building2, Palette, Clock, Globe, Sparkles, Users } from "lucide-react";
 
 export const Route = createFileRoute("/_app/workspace")({
+  head: () => ({
+    meta: [
+      { title: "Workspace Memory · AnchorSpace" },
+      { name: "description", content: "Teach AnchorSpace your brand name, tone of voice and business context." },
+      { property: "og:title", content: "Workspace Memory · AnchorSpace" },
+      { property: "og:description", content: "Teach AnchorSpace your brand name, tone of voice and business context." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: WorkspacePage,
 });
 
@@ -29,12 +39,12 @@ function WorkspacePage() {
   const connectedApps = integrations.filter((i) => i.connected).map((i) => i.name);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-4xl">
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Workspace Memory</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Context DeskOne remembers across every mission — brand, tone, hours, and more.
+            Context AnchorSpace remembers across every mission — brand, tone, hours, and more.
           </p>
         </div>
         <Button

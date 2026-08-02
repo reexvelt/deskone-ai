@@ -49,7 +49,7 @@
 :root {
   --radius: 0.875rem;
 
-  /* DeskOne palette — dark first */
+  /* AnchorSpace palette — dark first */
   --background: oklch(0.16 0.02 260);       /* #090B10 approx */
   --foreground: oklch(0.99 0 0);            /* #FFFFFF */
   --surface: oklch(0.22 0.02 260);          /* #141922 */
@@ -142,4 +142,72 @@
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes shimmerBar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Panel: the one elevated container used across every screen */
+@utility panel {
+  border-radius: var(--radius-3xl);
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-surface) 55%, transparent);
+  backdrop-filter: blur(20px) saturate(130%);
+}
+
+@utility panel-inset {
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-background) 75%, transparent);
+}
+
+@utility lift {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1), border-color 200ms ease, background-color 200ms ease;
+  &:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border));
+  }
+}
+
+@utility animate-rise {
+  animation: fadeUp 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-primary) 90%, transparent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 35%, transparent);
+  }
+
+  * {
+    scrollbar-color: color-mix(in oklab, var(--color-foreground) 18%, transparent) transparent;
+    scrollbar-width: thin;
+  }
+
+  h1 { font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem); line-height: 1.08; font-weight: 700; }
+  h2 { font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem); line-height: 1.2; font-weight: 650; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
 

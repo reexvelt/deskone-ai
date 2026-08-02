@@ -7,6 +7,16 @@ import { Bell, CheckCircle2, AlertTriangle, Zap, Plug, Sparkles, Archive, Check 
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/notifications")({
+  head: () => ({
+    meta: [
+      { title: "Notifications · AnchorSpace" },
+      { name: "description", content: "Approvals, completed missions and integration alerts in one inbox." },
+      { property: "og:title", content: "Notifications · AnchorSpace" },
+      { property: "og:description", content: "Approvals, completed missions and integration alerts in one inbox." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: NotificationsPage,
 });
 
@@ -54,7 +64,7 @@ function NotificationsPage() {
   const unread = notifications.filter((n) => !n.read && !n.archived).length;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Notifications</h1>

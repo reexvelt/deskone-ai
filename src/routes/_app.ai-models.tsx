@@ -10,6 +10,16 @@ import { Sparkles, Zap, Palette, Eye, ShieldCheck, ShieldAlert, Loader2, Star, K
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/ai-models")({
+  head: () => ({
+    meta: [
+      { title: "AI Models · AnchorSpace" },
+      { name: "description", content: "Choose and configure the AI models that power your missions, from fast drafting to deep reasoning." },
+      { property: "og:title", content: "AI Models · AnchorSpace" },
+      { property: "og:description", content: "Choose and configure the AI models that power your missions, from fast drafting to deep reasoning." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ModelsPage,
 });
 
@@ -32,11 +42,11 @@ function ModelsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-5xl">
       <div className="mb-10">
         <h1 className="text-3xl font-semibold tracking-tight">AI Models</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Configure providers, pick a default, and choose which models DeskOne routes missions through.
+          Configure providers, pick a default, and choose which models AnchorSpace routes missions through.
         </p>
       </div>
 
@@ -125,7 +135,7 @@ function ModelsPage() {
       </section>
 
       <section>
-        <div className="mb-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">DeskOne models</div>
+        <div className="mb-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">AnchorSpace models</div>
         <div className="space-y-3">
           {models.map((m) => {
             const Icon = iconMap[m.tag];

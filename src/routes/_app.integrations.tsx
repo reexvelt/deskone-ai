@@ -10,6 +10,16 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/integrations")({
+  head: () => ({
+    meta: [
+      { title: "Integrations · AnchorSpace" },
+      { name: "description", content: "Connect Drive, Gmail, Notion, YouTube and 20+ tools so AnchorSpace can execute real work." },
+      { property: "og:title", content: "Integrations · AnchorSpace" },
+      { property: "og:description", content: "Connect Drive, Gmail, Notion, YouTube and 20+ tools so AnchorSpace can execute real work." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: IntegrationsPage,
 });
 
@@ -30,13 +40,13 @@ function IntegrationsPage() {
   const needsAttention = integrations.filter((i) => i.connected && i.authStatus !== "healthy").length;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-6xl">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Integrations</div>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Connected apps</h1>
           <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-            Production-ready services DeskOne can operate on your behalf.
+            Production-ready services AnchorSpace can operate on your behalf.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -122,7 +132,7 @@ function IntegrationCard({
       />
       <div className="relative flex items-start gap-4">
         <div
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-semibold text-white"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-sm font-semibold text-primary-foreground"
           style={{ background: `linear-gradient(135deg, ${i.accent ?? "#3B82F6"}, ${i.accent ?? "#3B82F6"}cc)` }}
         >
           {i.name[0]}

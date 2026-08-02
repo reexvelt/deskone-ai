@@ -8,6 +8,16 @@ import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/register")({
+  head: () => ({
+    meta: [
+      { title: "Create Account · AnchorSpace" },
+      { name: "description", content: "Create your AnchorSpace workspace and run your first AI mission in minutes." },
+      { property: "og:title", content: "Create Account · AnchorSpace" },
+      { property: "og:description", content: "Create your AnchorSpace workspace and run your first AI mission in minutes." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: RegisterPage,
 });
 
@@ -26,7 +36,7 @@ function RegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      toast.success("Welcome to DeskOne");
+      toast.success("Welcome to AnchorSpace");
       navigate({ to: "/home" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Registration failed");

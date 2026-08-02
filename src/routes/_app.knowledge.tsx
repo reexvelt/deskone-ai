@@ -9,6 +9,16 @@ import { Upload, FileText, FileImage, FileSpreadsheet, File, Search, Trash2, Spa
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/knowledge")({
+  head: () => ({
+    meta: [
+      { title: "Knowledge Center · AnchorSpace" },
+      { name: "description", content: "Upload brand documents and references so every mission output stays on-message." },
+      { property: "og:title", content: "Knowledge Center · AnchorSpace" },
+      { property: "og:description", content: "Upload brand documents and references so every mission output stays on-message." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: KnowledgePage,
 });
 
@@ -51,11 +61,11 @@ function KnowledgePage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-6xl">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Knowledge</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Context DeskOne references on every mission.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Context AnchorSpace references on every mission.</p>
         </div>
         <Button className="rounded-full glow-primary" onClick={() => inputRef.current?.click()}>
           <Upload className="mr-1 h-4 w-4" /> Upload files
@@ -81,7 +91,7 @@ function KnowledgePage() {
           <Upload className="h-5 w-5" />
         </div>
         <div className="text-sm font-medium">Drop PDFs, Word docs, spreadsheets, images, or text files</div>
-        <div className="text-xs text-muted-foreground">DeskOne indexes each source so missions plan with your context.</div>
+        <div className="text-xs text-muted-foreground">AnchorSpace indexes each source so missions plan with your context.</div>
       </label>
 
       <div className="mt-6 flex items-center gap-3">

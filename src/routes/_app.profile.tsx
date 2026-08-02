@@ -9,6 +9,16 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/profile")({
+  head: () => ({
+    meta: [
+      { title: "Profile · AnchorSpace" },
+      { name: "description", content: "Manage your name, avatar and personal workspace preferences." },
+      { property: "og:title", content: "Profile · AnchorSpace" },
+      { property: "og:description", content: "Manage your name, avatar and personal workspace preferences." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ProfilePage,
 });
 
@@ -19,10 +29,10 @@ function ProfilePage() {
   const initials = (user?.name ?? "U").split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Profile</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Your identity across DeskOne.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Your identity across AnchorSpace.</p>
       </div>
 
       <Card className="border-border bg-card p-6">

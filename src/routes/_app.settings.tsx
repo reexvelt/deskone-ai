@@ -9,6 +9,16 @@ import { useStore } from "@/lib/store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/settings")({
+  head: () => ({
+    meta: [
+      { title: "Settings · AnchorSpace" },
+      { name: "description", content: "Control notifications, security and workspace defaults for AnchorSpace." },
+      { property: "og:title", content: "Settings · AnchorSpace" },
+      { property: "og:description", content: "Control notifications, security and workspace defaults for AnchorSpace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: SettingsPage,
 });
 
@@ -22,7 +32,7 @@ function SettingsPage() {
   const pct = Math.round((credits.used / credits.total) * 100);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">Preferences, billing, and workspace controls.</p>
@@ -31,7 +41,7 @@ function SettingsPage() {
       <div className="space-y-4">
         <Card className="border-border bg-card p-6">
           <div className="text-sm font-semibold">Mission execution</div>
-          <div className="mt-1 text-xs text-muted-foreground">Control how DeskOne executes on your behalf.</div>
+          <div className="mt-1 text-xs text-muted-foreground">Control how AnchorSpace executes on your behalf.</div>
           <Row label="Auto-approve low-risk missions" description="Skip approval for missions under 5 steps and no external send.">
             <Switch checked={autoApprove} onCheckedChange={setAutoApprove} />
           </Row>
@@ -55,14 +65,14 @@ function SettingsPage() {
 
         <Card className="border-border bg-card p-6">
           <div className="text-sm font-semibold">Privacy</div>
-          <Row label="Anonymous usage analytics" description="Help improve DeskOne without sharing personal data.">
+          <Row label="Anonymous usage analytics" description="Help improve AnchorSpace without sharing personal data.">
             <Switch checked={analytics} onCheckedChange={setAnalytics} />
           </Row>
         </Card>
 
         <Card className="border-destructive/30 bg-card p-6">
           <div className="text-sm font-semibold text-destructive">Danger zone</div>
-          <Row label="Sign out" description="End your DeskOne session on this device.">
+          <Row label="Sign out" description="End your AnchorSpace session on this device.">
             <Button
               variant="outline"
               className="rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"

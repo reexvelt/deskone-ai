@@ -8,6 +8,16 @@ import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
+  head: () => ({
+    meta: [
+      { title: "Sign In · AnchorSpace" },
+      { name: "description", content: "Sign in to your AnchorSpace AI execution workspace." },
+      { property: "og:title", content: "Sign In · AnchorSpace" },
+      { property: "og:description", content: "Sign in to your AnchorSpace AI execution workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: LoginPage,
 });
 
@@ -39,10 +49,10 @@ function LoginPage() {
   return (
     <AuthShell
       title="Welcome back"
-      subtitle="Sign in to your DeskOne workspace."
+      subtitle="Sign in to your AnchorSpace workspace."
       footer={
         <>
-          New to DeskOne?{" "}
+          New to AnchorSpace?{" "}
           <Link to="/register" className="text-primary hover:underline">
             Create an account
           </Link>

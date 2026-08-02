@@ -10,6 +10,16 @@ import { MissionComposer } from "@/components/mission-composer";
 import { Search, Rocket } from "lucide-react";
 
 export const Route = createFileRoute("/_app/missions")({
+  head: () => ({
+    meta: [
+      { title: "Missions · AnchorSpace" },
+      { name: "description", content: "Track every AI mission from plan approval through execution and delivered outputs." },
+      { property: "og:title", content: "Missions · AnchorSpace" },
+      { property: "og:description", content: "Track every AI mission from plan approval through execution and delivered outputs." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: MissionsPage,
 });
 
@@ -31,11 +41,11 @@ function MissionsPage() {
     .filter((m) => m.title.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
+    <div className="mx-auto w-full max-w-6xl">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Missions</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Every outcome you've asked DeskOne to execute.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Every outcome you've asked AnchorSpace to execute.</p>
         </div>
       </div>
 

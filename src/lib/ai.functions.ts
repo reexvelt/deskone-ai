@@ -72,7 +72,7 @@ export const generateMissionPlan = createServerFn({ method: "POST" })
     if (!key) throw new Error("AI gateway not configured");
     const gateway = createLovableAiGatewayProvider(key);
 
-    const system = `You are DeskOne's mission planner. Given a user goal, output a strict JSON object matching this TypeScript type:
+    const system = `You are AnchorSpace's mission planner. Given a user goal, output a strict JSON object matching this TypeScript type:
 { "objective": string, "estimatedMinutes": number, "apps": string[], "steps": { "title": string, "detail": string }[] }
 - objective: one sentence describing the outcome
 - estimatedMinutes: 5–120
