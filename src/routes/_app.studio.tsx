@@ -17,6 +17,8 @@ import {
   Sparkles,
   WandSparkles,
 } from "lucide-react";
+import { useStore } from "@/lib/store";
+
 
 export const Route = createFileRoute("/_app/studio")({
   head: () => ({
