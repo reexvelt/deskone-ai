@@ -407,7 +407,7 @@ function StudioPage() {
                       : "Generated headline"}
               </p>
               {approved && (
-                <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-400">
+                <span className="inline-flex items-center gap-2 rounded-full bg-success/15 px-3 py-1 text-xs text-success">
                   <CheckCircle2 className="h-4 w-4" />
                   Approved
                 </span>
@@ -433,7 +433,7 @@ function StudioPage() {
               <button
                 type="button"
                 onClick={approveOutputs}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-300 transition hover:bg-emerald-500/15"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-success/20 bg-success/10 px-4 py-3 text-sm font-semibold text-success transition hover:bg-success/15"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 Approve
