@@ -2,6 +2,8 @@ import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-rout
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useStore } from "@/lib/store";
+import { fetchOnboarding, isOnboardedLocally, markOnboardedLocally } from "@/lib/onboarding";
+
 import { CommandPaletteProvider, useCommandPalette } from "@/components/command-palette";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
