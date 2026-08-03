@@ -2,6 +2,8 @@ import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-rout
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useStore } from "@/lib/store";
+import { fetchOnboarding, isOnboardedLocally, markOnboardedLocally } from "@/lib/onboarding";
+
 import { CommandPaletteProvider, useCommandPalette } from "@/components/command-palette";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -84,8 +86,23 @@ function AppLayoutRoute() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (ready && !user) navigate({ to: "/login", replace: true });
+    if (!ready) return;
+    if (!user) {
+      navigate({ to: "/login", replace: true });
+      return;
+    }
+    if (isOnboardedLocally(user.id)) return;
+    let active = true;
+    void fetchOnboarding(user.id).then((answers) => {
+      if (!active) return;
+      if (answers?.completed) markOnboardedLocally(user.id);
+      else navigate({ to: "/onboarding", replace: true });
+    });
+    return () => {
+      active = false;
+    };
   }, [ready, user, navigate]);
+
 
   if (!ready || !user) {
     return (

@@ -211,3 +211,26 @@
 }
 
 
+
+/* Landing motion primitives */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes flow {
+  0% { left: 2%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 98%; opacity: 0; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes orbit-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.8; }
+}

@@ -1,29 +1,34 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import {
-  ArrowRight,
-  BadgeCheck,
-  CalendarDays,
-  ChevronRight,
-  Cloud,
-  Command,
-  FolderKanban,
-  PlayCircle,
-  ShieldCheck,
-  Sparkles,
-  Upload,
-  WandSparkles,
-  Zap,
-} from "lucide-react";
+  FaqSection,
+  FeatureSection,
+  FinalCta,
+  LandingFooter,
+  PricingSection,
+  ProblemSection,
+  PublishingFlowSection,
+  SolutionSection,
+  TestimonialSection,
+} from "@/components/landing-sections";
+import { ArrowRight, Menu, PlayCircle, ShieldCheck, Sparkles, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AnchorSpace · The AI Execution Workspace" },
-      { name: "description", content: "AnchorSpace turns goals into missions: it plans the work, you approve it, and your connected apps execute." },
-      { property: "og:title", content: "AnchorSpace · The AI Execution Workspace" },
-      { property: "og:description", content: "AnchorSpace turns goals into missions: it plans the work, you approve it, and your connected apps execute." },
+      { title: "AnchorSpace — Your Entire Digital Workspace. Connected." },
+      {
+        name: "description",
+        content:
+          "AnchorSpace connects the tools digital professionals already use into one intelligent workspace: projects, content, clients, publishing and scheduling.",
+      },
+      { property: "og:title", content: "AnchorSpace — Your Entire Digital Workspace. Connected." },
+      {
+        property: "og:description",
+        content:
+          "Manage projects, create content, connect your favorite tools, organize clients and publish everywhere — from one intelligent workspace.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -31,435 +36,222 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
-const features = [
-  {
-    icon: Command,
-    title: "Mission Center",
-    desc: "Turn ideas into structured missions with progress, outputs, and approval steps.",
-  },
-  {
-    icon: WandSparkles,
-    title: "Content Studio",
-    desc: "Upload video, audio, images, and notes, then generate captions, scripts, and post-ready assets.",
-  },
-  {
-    icon: FolderKanban,
-    title: "Projects",
-    desc: "Organize every client, campaign, or idea inside one clean, connected workspace.",
-  },
-  {
-    icon: Cloud,
-    title: "Connected Apps",
-    desc: "Bring together Drive, Calendar, Gmail, YouTube, and more when you are ready.",
-  },
-  {
-    icon: CalendarDays,
-    title: "Smart Calendar",
-    desc: "Track deadlines, publishing schedules, and content plans in one place.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Workspace Memory",
-    desc: "Save preferences, style, brand notes, and reusable context for future missions.",
-  },
+const integrations: { name: string; short: string; from: string; to: string }[] = [
+  { name: "ChatGPT", short: "GPT", from: "#10A37F", to: "#0E7C61" },
+  { name: "Claude", short: "CL", from: "#D97757", to: "#B45E42" },
+  { name: "Gemini", short: "GM", from: "#4285F4", to: "#8E7CFF" },
+  { name: "Canva", short: "CV", from: "#00C4CC", to: "#7D2AE8" },
+  { name: "Google Drive", short: "DR", from: "#FFCF63", to: "#34A853" },
+  { name: "Instagram", short: "IG", from: "#E1306C", to: "#F77737" },
+  { name: "Facebook", short: "FB", from: "#1877F2", to: "#0B5FCC" },
+  { name: "LinkedIn", short: "IN", from: "#0A66C2", to: "#084E96" },
+  { name: "WordPress", short: "WP", from: "#21759B", to: "#464342" },
+  { name: "Notion", short: "NO", from: "#FFFFFF", to: "#9CA3AF" },
+  { name: "Slack", short: "SL", from: "#36C5F0", to: "#E01E5A" },
+  { name: "ElevenLabs", short: "EL", from: "#A78BFA", to: "#6D28D9" },
+  { name: "CapCut", short: "CC", from: "#00E0D3", to: "#0B84FF" },
 ];
 
-const steps = [
-  {
-    number: "01",
-    title: "Create a project",
-    text: "Start with a client, brand, or content idea.",
-  },
-  {
-    number: "02",
-    title: "Add a mission",
-    text: "Define the goal and let AnchorSpace organize the workflow.",
-  },
-  {
-    number: "03",
-    title: "Upload content",
-    text: "Drop in video, audio, images, or documents.",
-  },
-  {
-    number: "04",
-    title: "Generate and approve",
-    text: "Create captions, scripts, titles, and publishing assets.",
-  },
-];
-
-const pricing = [
-  {
-    name: "Free",
-    price: "$0",
-    badge: "Starter",
-    perks: ["30 missions / month", "3 projects", "3 connected apps", "Basic AI tools", "Ads supported"],
-  },
-  {
-    name: "Plus",
-    price: "$12.99",
-    badge: "Popular",
-    perks: ["More missions", "More storage", "Reduced ads", "Better AI tools", "Content Studio access"],
-  },
-  {
-    name: "Pro",
-    price: "$29.99",
-    badge: "Best Value",
-    perks: ["No ads", "Advanced automation", "Premium AI", "Unlimited projects", "Priority processing"],
-  },
-];
-
-const faqs = [
-  {
-    q: "What is AnchorSpace?",
-    a: "AnchorSpace is an AI-powered workspace for creators, freelancers, and creative teams to organize projects, generate content, and manage work in one place.",
-  },
-  {
-    q: "Is this only for content creators?",
-    a: "Content creators are the first focus, but freelancers, marketers, and small teams can also use it to manage client work and content workflows.",
-  },
-  {
-    q: "Will I be able to connect my apps?",
-    a: "Yes. The first version is designed around connected workflows, starting with the most useful tools and expanding over time.",
-  },
-  {
-    q: "Is AnchorSpace another AI chatbot?",
-    a: "No. It is built to help users complete work with missions, projects, uploads, approvals, and content workflows.",
-  },
+const navLinks = [
+  { label: "Solution", href: "#solution" },
+  { label: "Features", href: "#features" },
+  { label: "Workflow", href: "#workflow" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 function LandingPage() {
   const { user, ready } = useAuth();
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (!ready) return;
-    if (user) navigate({ to: "/home", replace: true });
+    if (ready && user) navigate({ to: "/home", replace: true });
   }, [ready, user, navigate]);
 
-  if (!ready) {
-    return (
-      <div className="grid min-h-screen place-items-center bg-background text-foreground">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-border border-t-transparent" />
-      </div>
-    );
-  }
-
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-[-10%] top-[-10%] h-80 w-80 rounded-full bg-secondary/25 blur-3xl" />
-        <div className="absolute right-[-10%] top-[15%] h-80 w-80 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[30%] h-80 w-80 rounded-full bg-success/10 blur-3xl" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-5 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between gap-4 rounded-full border border-border bg-surface/60 px-4 py-3 backdrop-blur-xl sm:px-6">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary to-primary shadow-[0_0_30px_rgba(124,92,255,0.35)]">
-              <span className="text-lg font-black">A</span>
-            </div>
-            <div>
-              <p className="text-sm font-semibold tracking-[0.3em] text-muted-foreground">ANCHORSPACE</p>
-              <p className="text-xs text-muted-foreground">Create. Connect. Command.</p>
-            </div>
+    <main className="min-h-dvh overflow-x-hidden bg-background text-foreground">
+      {/* Nav */}
+      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+          <Link to="/" className="flex min-w-0 items-center gap-2.5">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-secondary to-primary text-sm font-black shadow-[0_10px_30px_-10px_color-mix(in_oklab,var(--color-secondary)_70%,transparent)]">
+              A
+            </span>
+            <span className="truncate text-[15px] font-semibold tracking-tight">AnchorSpace</span>
           </Link>
 
-          <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-            <a href="#features" className="transition hover:text-foreground">
-              Features
-            </a>
-            <a href="#workflow" className="transition hover:text-foreground">
-              Workflow
-            </a>
-            <a href="#pricing" className="transition hover:text-foreground">
-              Pricing
-            </a>
-            <a href="#faq" className="transition hover:text-foreground">
-              FAQ
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-3">
+            <nav className="hidden items-center gap-1 lg:flex">
+              {navLinks.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className="rounded-full px-3.5 py-2 text-sm text-muted-foreground transition hover:bg-surface/70 hover:text-foreground"
+                >
+                  {l.label}
+                </a>
+              ))}
+            </nav>
             <Link
               to="/login"
-              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:border-border hover:bg-surface/60"
+              className="hidden h-10 items-center rounded-full px-4 text-sm font-medium text-muted-foreground transition hover:text-foreground sm:inline-flex"
             >
-              Log in
+              Sign in
             </Link>
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-secondary to-primary px-4 py-2 text-sm font-semibold text-foreground shadow-[0_10px_30px_rgba(58,167,255,0.18)] transition hover:translate-y-[-1px]"
+              className="inline-flex h-10 items-center gap-1.5 rounded-full bg-gradient-to-r from-secondary to-primary px-4 text-sm font-semibold transition hover:opacity-90"
             >
-              Get Early Access <ArrowRight className="h-4 w-4" />
+              Start Free
             </Link>
+            <button
+              type="button"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMenuOpen((v) => !v)}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border text-muted-foreground lg:hidden"
+            >
+              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
-        </header>
-
-        <section className="grid items-center gap-10 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
-          <div className="max-w-2xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-4 py-2 text-sm text-foreground backdrop-blur">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-400" />
-              Launching soon for creators and freelancers
-            </div>
-
-            <h1 className="text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl">
-              The intelligent workspace for creators and freelancers.
-            </h1>
-
-            <p className="mt-6 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
-              Plan projects. Create content. Organize files. Generate AI-powered ideas. Manage clients.
-              Publish with confidence — all from one premium workspace.
-            </p>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-secondary to-primary px-6 py-3 text-sm font-semibold text-foreground shadow-[0_15px_40px_rgba(124,92,255,0.25)] transition hover:translate-y-[-2px]"
-              >
-                Get Early Access <ChevronRight className="h-4 w-4" />
-              </Link>
+        </div>
+        {menuOpen && (
+          <nav className="border-t border-border bg-background/95 px-4 py-3 lg:hidden">
+            {navLinks.map((l) => (
               <a
-                href="#workflow"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-surface/60 px-6 py-3 text-sm font-semibold text-foreground backdrop-blur transition hover:bg-surface"
+                key={l.href}
+                href={l.href}
+                onClick={() => setMenuOpen(false)}
+                className="block rounded-xl px-3 py-3 text-sm text-muted-foreground transition hover:bg-surface hover:text-foreground"
               >
-                <PlayCircle className="h-4 w-4" />
-                See how it works
+                {l.label}
               </a>
-            </div>
-
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {[
-                ["Creators", "Content-first"],
-                ["Freelancers", "Client-ready"],
-                ["Projects", "All in one"],
-                ["AI", "Mission-based"],
-              ].map(([title, sub]) => (
-                <div key={title} className="rounded-2xl border border-border bg-surface/60 p-4 backdrop-blur">
-                  <p className="text-sm font-semibold">{title}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-secondary/20 to-primary/20 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-surface/90 shadow-2xl backdrop-blur-xl">
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                <div>
-                  <p className="text-sm font-semibold">AnchorSpace Studio</p>
-                  <p className="text-xs text-muted-foreground">Mission command for modern creators</p>
-                </div>
-                <div className="rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted-foreground">
-                  Live workspace
-                </div>
-              </div>
-
-              <div className="space-y-4 p-5">
-                <div className="rounded-3xl border border-border bg-surface/60 p-5">
-                  <p className="text-sm text-muted-foreground">What would you like to accomplish today?</p>
-                  <div className="mt-4 rounded-2xl border border-border bg-background p-4 text-sm text-foreground">
-                    Create a YouTube video about meal prep, generate captions, save to Drive, and schedule it
-                    for Friday.
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {["Generate script", "Create captions", "Save assets", "Schedule publish"].map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted-foreground"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {[
-                    ["Mission progress", "72%", Zap],
-                    ["Connected apps", "4 active", BadgeCheck],
-                    ["Files organized", "18 assets", Upload],
-                    ["Next publish", "Friday 6 PM", CalendarDays],
-                  ].map(([label, value, Icon]) => (
-                    <div key={label as string} className="rounded-2xl border border-border bg-surface/60 p-4">
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{label as string}</p>
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                      <p className="mt-4 text-xl font-bold">{value as string}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="features" className="py-10">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Features</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              Built to reduce switching, save time, and keep work moving.
-            </h2>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {features.map(({ icon: Icon, title, desc }) => (
-              <div
-                key={title}
-                className="rounded-[1.75rem] border border-border bg-surface/50 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.15)] backdrop-blur transition hover:-translate-y-1 hover:border-border"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary/20 to-primary/20 text-foreground">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-5 text-lg font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-7 text-muted-foreground">{desc}</p>
-              </div>
             ))}
-          </div>
-        </section>
+            <Link
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              className="mt-1 block rounded-xl px-3 py-3 text-sm font-medium"
+            >
+              Sign in
+            </Link>
+          </nav>
+        )}
+      </header>
 
-        <section id="workflow" className="py-20">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Workflow</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              One workspace. One flow. Everything connected.
-            </h2>
-          </div>
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-[-18rem] h-[36rem] w-[36rem] -translate-x-1/2 rounded-full bg-secondary/20 blur-[120px]" />
+          <div className="absolute right-[-8rem] top-[8rem] h-[24rem] w-[24rem] rounded-full bg-primary/15 blur-[110px]" />
+          <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(70%_50%_at_50%_0%,black,transparent)]" />
+        </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {steps.map((step) => (
-              <div key={step.number} className="rounded-[1.75rem] border border-border bg-surface/50 p-6">
-                <p className="text-xs font-semibold tracking-[0.4em] text-muted-foreground">{step.number}</p>
-                <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
-                <p className="mt-2 text-sm leading-7 text-muted-foreground">{step.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="pricing" className="py-20">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Pricing</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              Simple plans for creators at every stage.
-            </h2>
+        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24 lg:px-8">
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3.5 py-1.5 text-xs text-muted-foreground backdrop-blur">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            One workspace for every tool you already use
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            {pricing.map((plan) => (
-              <div
-                key={plan.name}
-                className={`rounded-[2rem] border p-7 backdrop-blur ${
-                  plan.name === "Plus"
-                    ? "border-secondary/35 bg-secondary/10 shadow-[0_0_50px_rgba(124,92,255,0.12)]"
-                    : "border-border bg-surface/50"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-semibold">{plan.name}</h3>
-                  <span className="rounded-full border border-border bg-surface/60 px-3 py-1 text-xs text-muted-foreground">
-                    {plan.badge}
-                  </span>
-                </div>
-                <p className="mt-5 text-4xl font-black">
-                  {plan.price}
-                  <span className="text-sm font-medium text-muted-foreground"> / month</span>
-                </p>
+          <h1 className="mx-auto mt-7 max-w-4xl text-[2.25rem] font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-[4.25rem]">
+            Your Entire Digital Workspace.{" "}
+            <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+              Connected.
+            </span>
+          </h1>
 
-                <ul className="mt-6 space-y-3">
-                  {plan.perks.map((perk) => (
-                    <li key={perk} className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <BadgeCheck className="h-4 w-4 text-emerald-400" />
-                      {perk}
-                    </li>
-                  ))}
-                </ul>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+            Manage projects. Create content. Connect your favorite tools. Organize clients. Publish everywhere.
+            All from one intelligent workspace.
+          </p>
 
-                <Link
-                  to="/register"
-                  className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition ${
-                    plan.name === "Plus"
-                      ? "bg-foreground text-background hover:bg-foreground"
-                      : "border border-border bg-surface/60 text-foreground hover:bg-surface"
-                  }`}
-                >
-                  Get Started <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="faq" className="py-10">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">FAQ</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              Questions creators will ask before they join.
-            </h2>
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              to="/register"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-secondary to-primary px-7 text-sm font-semibold shadow-[0_20px_50px_-20px_color-mix(in_oklab,var(--color-primary)_80%,transparent)] transition hover:-translate-y-0.5 sm:w-auto"
+            >
+              Start Free <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href="#workflow"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-surface/50 px-7 text-sm font-semibold backdrop-blur transition hover:bg-surface sm:w-auto"
+            >
+              <PlayCircle className="h-4 w-4" /> Watch Demo
+            </a>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            {faqs.map((item) => (
-              <div key={item.q} className="rounded-[1.75rem] border border-border bg-surface/50 p-6">
-                <h3 className="text-lg font-semibold">{item.q}</h3>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+          <p className="mt-5 inline-flex items-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="h-3.5 w-3.5 text-success" /> No credit card required · Free plan forever
+          </p>
 
-        <section className="py-16">
-          <div className="rounded-[2.25rem] border border-border bg-gradient-to-r from-secondary/20 via-surface/50 to-primary/20 p-8 text-center backdrop-blur-xl sm:p-12">
-            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
-              <Sparkles className="h-4 w-4" />
-              Launching soon
-            </p>
-            <h2 className="mt-6 text-3xl font-black tracking-tight sm:text-5xl">
-              Ready to create without the chaos?
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
-              Join the first creators building with AnchorSpace and experience a workspace designed to help you stay
-              organized, create faster, and command your workflow from one place.
-            </p>
+          <IntegrationOrbit />
+        </div>
+      </section>
 
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition hover:bg-foreground"
-              >
-                Get Early Access <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-surface/60 px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface"
-              >
-                Sign in
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <footer className="border-t border-border py-8 text-sm text-muted-foreground">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-            <p>© {new Date().getFullYear()} AnchorSpace. All rights reserved.</p>
-            <div className="flex flex-wrap gap-4">
-              <a href="#features" className="transition hover:text-muted-foreground">
-                Features
-              </a>
-              <a href="#pricing" className="transition hover:text-muted-foreground">
-                Pricing
-              </a>
-              <a href="#faq" className="transition hover:text-muted-foreground">
-                FAQ
-              </a>
-              <Link to="/login" className="transition hover:text-muted-foreground">
-                Login
-              </Link>
-            </div>
-          </div>
-        </footer>
-      </div>
+      <ProblemSection />
+      <SolutionSection />
+      <FeatureSection />
+      <PublishingFlowSection />
+      <TestimonialSection />
+      <PricingSection />
+      <FaqSection />
+      <FinalCta />
+      <LandingFooter />
     </main>
+  );
+}
+
+function IntegrationOrbit() {
+  return (
+    <div className="relative mx-auto mt-16 max-w-4xl sm:mt-20">
+      {/* Connection lines */}
+      <svg
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox="0 0 800 420"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        {[80, 200, 320, 480, 600, 720].map((x, i) => (
+          <line
+            key={x}
+            x1={x}
+            y1={i % 2 === 0 ? 60 : 360}
+            x2={400}
+            y2={210}
+            stroke="color-mix(in oklab, var(--color-primary) 45%, transparent)"
+            strokeWidth="1"
+            strokeDasharray="4 6"
+            style={{ animation: `orbit-pulse ${3 + i * 0.4}s ease-in-out ${i * 0.2}s infinite` }}
+          />
+        ))}
+      </svg>
+
+      <div className="relative rounded-[2rem] border border-border bg-surface/40 p-5 backdrop-blur-xl sm:p-10">
+        <div className="mx-auto mb-8 flex max-w-xs flex-col items-center rounded-3xl border border-primary/30 bg-background/70 px-6 py-5 text-center shadow-[0_30px_80px_-40px_color-mix(in_oklab,var(--color-primary)_70%,transparent)]">
+          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-secondary to-primary text-lg font-black">
+            A
+          </span>
+          <p className="mt-3 text-sm font-semibold tracking-tight">AnchorSpace</p>
+          <p className="mt-1 text-xs text-muted-foreground">The connective layer</p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 sm:gap-4 lg:grid-cols-7">
+          {integrations.map((t, i) => (
+            <div
+              key={t.name}
+              className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-background/60 px-2 py-3.5 text-center transition hover:border-primary/40"
+              style={{ animation: `float-y ${4 + (i % 5) * 0.6}s ease-in-out ${i * 0.15}s infinite` }}
+            >
+              <span
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-[11px] font-bold text-background"
+                style={{ background: `linear-gradient(135deg, ${t.from}, ${t.to})` }}
+              >
+                {t.short}
+              </span>
+              <span className="w-full truncate text-[10px] text-muted-foreground sm:text-[11px]">{t.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
