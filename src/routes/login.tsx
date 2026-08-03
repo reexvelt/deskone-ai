@@ -5,15 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
+import { fetchOnboarding, isOnboardedLocally, markOnboardedLocally } from "@/lib/onboarding";
+import { GoogleButton } from "@/components/google-button";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: "Sign In · AnchorSpace" },
-      { name: "description", content: "Sign in to your AnchorSpace AI execution workspace." },
+      { name: "description", content: "Sign in to your AnchorSpace workspace to manage projects, content and connected tools." },
       { property: "og:title", content: "Sign In · AnchorSpace" },
-      { property: "og:description", content: "Sign in to your AnchorSpace AI execution workspace." },
+      { property: "og:description", content: "Sign in to your AnchorSpace workspace to manage projects, content and connected tools." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -26,19 +29,39 @@ function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (ready && user) navigate({ to: "/home" });
+    if (!ready || !user) return;
+    let active = true;
+    const go = async () => {
+      if (isOnboardedLocally(user.id)) {
+        navigate({ to: "/home", replace: true });
+        return;
+      }
+      const answers = await fetchOnboarding(user.id);
+      if (!active) return;
+      if (answers?.completed) {
+        markOnboardedLocally(user.id);
+        navigate({ to: "/home", replace: true });
+      } else {
+        navigate({ to: "/onboarding", replace: true });
+      }
+    };
+    void go();
+    return () => {
+      active = false;
+    };
   }, [ready, user, navigate]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !password) return toast.error("Enter email and password");
+    if (!email || !password) return toast.error("Enter your email and password");
     setLoading(true);
     try {
-      await login(email, password);
-      navigate({ to: "/home" });
+      await login(email.trim(), password);
+      // Redirect is handled by the effect above once the session lands.
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Sign in failed");
     } finally {
@@ -49,11 +72,11 @@ function LoginPage() {
   return (
     <AuthShell
       title="Welcome back"
-      subtitle="Sign in to your AnchorSpace workspace."
+      subtitle="Sign in to pick up exactly where you left off."
       footer={
         <>
           New to AnchorSpace?{" "}
-          <Link to="/register" className="text-primary hover:underline">
+          <Link to="/register" className="font-medium text-primary hover:underline">
             Create an account
           </Link>
         </>
@@ -61,51 +84,76 @@ function LoginPage() {
     >
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" autoComplete="email" />
+          <Label htmlFor="email" className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+            Email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            inputMode="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@company.com"
+            autoComplete="email"
+            className="h-12 rounded-2xl border-border bg-surface/60 text-base"
+          />
         </div>
+
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+          <div className="flex items-center justify-between gap-2">
+            <Label htmlFor="password" className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+              Password
+            </Label>
             <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">
-              Forgot?
+              Forgot password?
             </Link>
           </div>
-          <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" />
+          <div className="relative">
+            <Input
+              id="password"
+              type={show ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              className="h-12 rounded-2xl border-border bg-surface/60 pr-12 text-base"
+            />
+            <button
+              type="button"
+              onClick={() => setShow((v) => !v)}
+              aria-label={show ? "Hide password" : "Show password"}
+              className="absolute right-1.5 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-xl text-muted-foreground transition hover:text-foreground"
+            >
+              {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
-        <Button type="submit" className="h-11 w-full rounded-full text-sm font-medium" disabled={loading}>
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="h-12 w-full rounded-full bg-gradient-to-r from-secondary to-primary text-sm font-semibold"
+        >
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {loading ? "Signing in…" : "Sign in"}
         </Button>
-        <div className="relative py-2">
-          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center"><span className="bg-card px-3 text-xs text-muted-foreground">or</span></div>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          className="h-11 w-full rounded-full border-border bg-surface text-sm font-medium hover:bg-accent"
-          onClick={async () => {
-            try {
-              await loginWithGoogle();
-            } catch (err) {
-              toast.error(err instanceof Error ? err.message : "Google sign-in failed");
-            }
-          }}
-        >
-          <GoogleIcon /> Continue with Google
-        </Button>
+
+        <Divider />
+        <GoogleButton onClick={loginWithGoogle} label="Continue with Google" />
       </form>
     </AuthShell>
   );
 }
 
-function GoogleIcon() {
+function Divider() {
   return (
-    <svg width="16" height="16" viewBox="0 0 48 48" className="mr-1">
-      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C33.9 6 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5Z" />
-      <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.7 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C33.9 6 29.2 4 24 4 16.3 4 9.6 8.3 6.3 14.7Z" />
-      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.4-5.2l-6.2-5c-2 1.4-4.5 2.2-7.2 2.2-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.4 39.6 16.1 44 24 44Z" />
-      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.1 5.6l6.2 5c-.4.4 6.6-4.8 6.6-14.6 0-1.2-.1-2.3-.4-3.5Z" />
-    </svg>
+    <div className="relative py-1.5">
+      <div className="absolute inset-0 flex items-center">
+        <div className="w-full border-t border-border" />
+      </div>
+      <div className="relative flex justify-center">
+        <span className="bg-background px-3 text-xs text-muted-foreground">or</span>
+      </div>
+    </div>
   );
 }
