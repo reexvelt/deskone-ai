@@ -9,16 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RefCodeRouteImport } from './routes/ref.$code'
+import { Route as InviteCodeRouteImport } from './routes/invite.$code'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AppWorkspaceRouteImport } from './routes/_app.workspace'
 import { Route as AppStudioRouteImport } from './routes/_app.studio'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppReferralsRouteImport } from './routes/_app.referrals'
 import { Route as AppProjectsRouteImport } from './routes/_app.projects'
 import { Route as AppProfileRouteImport } from './routes/_app.profile'
 import { Route as AppNotificationsRouteImport } from './routes/_app.notifications'
@@ -26,12 +32,18 @@ import { Route as AppMissionsRouteImport } from './routes/_app.missions'
 import { Route as AppKnowledgeRouteImport } from './routes/_app.knowledge'
 import { Route as AppIntegrationsRouteImport } from './routes/_app.integrations'
 import { Route as AppHomeRouteImport } from './routes/_app.home'
+import { Route as AppCreditsRouteImport } from './routes/_app.credits'
 import { Route as AppCalendarRouteImport } from './routes/_app.calendar'
 import { Route as AppApiKeysRouteImport } from './routes/_app.api-keys'
 import { Route as AppAiModelsRouteImport } from './routes/_app.ai-models'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app.projects.$projectId'
 import { Route as AppMissionsMissionIdRouteImport } from './routes/_app.missions.$missionId'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -40,6 +52,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -66,6 +83,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RefCodeRoute = RefCodeRouteImport.update({
+  id: '/ref/$code',
+  path: '/ref/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteCodeRoute = InviteCodeRouteImport.update({
+  id: '/invite/$code',
+  path: '/invite/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppWorkspaceRoute = AppWorkspaceRouteImport.update({
   id: '/workspace',
   path: '/workspace',
@@ -79,6 +111,11 @@ const AppStudioRoute = AppStudioRouteImport.update({
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReferralsRoute = AppReferralsRouteImport.update({
+  id: '/referrals',
+  path: '/referrals',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProjectsRoute = AppProjectsRouteImport.update({
@@ -116,6 +153,11 @@ const AppHomeRoute = AppHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCreditsRoute = AppCreditsRouteImport.update({
+  id: '/credits',
+  path: '/credits',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCalendarRoute = AppCalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
@@ -147,11 +189,14 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/ai-models': typeof AppAiModelsRoute
   '/api-keys': typeof AppApiKeysRoute
   '/calendar': typeof AppCalendarRoute
+  '/credits': typeof AppCreditsRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
   '/knowledge': typeof AppKnowledgeRoute
@@ -159,9 +204,13 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof AppNotificationsRoute
   '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRouteWithChildren
+  '/referrals': typeof AppReferralsRoute
   '/settings': typeof AppSettingsRoute
   '/studio': typeof AppStudioRoute
   '/workspace': typeof AppWorkspaceRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/invite/$code': typeof InviteCodeRoute
+  '/ref/$code': typeof RefCodeRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
@@ -170,11 +219,14 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/ai-models': typeof AppAiModelsRoute
   '/api-keys': typeof AppApiKeysRoute
   '/calendar': typeof AppCalendarRoute
+  '/credits': typeof AppCreditsRoute
   '/home': typeof AppHomeRoute
   '/integrations': typeof AppIntegrationsRoute
   '/knowledge': typeof AppKnowledgeRoute
@@ -182,9 +234,13 @@ export interface FileRoutesByTo {
   '/notifications': typeof AppNotificationsRoute
   '/profile': typeof AppProfileRoute
   '/projects': typeof AppProjectsRouteWithChildren
+  '/referrals': typeof AppReferralsRoute
   '/settings': typeof AppSettingsRoute
   '/studio': typeof AppStudioRoute
   '/workspace': typeof AppWorkspaceRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/invite/$code': typeof InviteCodeRoute
+  '/ref/$code': typeof RefCodeRoute
   '/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
@@ -195,11 +251,14 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/_app/ai-models': typeof AppAiModelsRoute
   '/_app/api-keys': typeof AppApiKeysRoute
   '/_app/calendar': typeof AppCalendarRoute
+  '/_app/credits': typeof AppCreditsRoute
   '/_app/home': typeof AppHomeRoute
   '/_app/integrations': typeof AppIntegrationsRoute
   '/_app/knowledge': typeof AppKnowledgeRoute
@@ -207,9 +266,13 @@ export interface FileRoutesById {
   '/_app/notifications': typeof AppNotificationsRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/projects': typeof AppProjectsRouteWithChildren
+  '/_app/referrals': typeof AppReferralsRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/studio': typeof AppStudioRoute
   '/_app/workspace': typeof AppWorkspaceRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/invite/$code': typeof InviteCodeRoute
+  '/ref/$code': typeof RefCodeRoute
   '/_app/missions/$missionId': typeof AppMissionsMissionIdRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
 }
@@ -220,11 +283,14 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/onboarding'
+    | '/pricing'
     | '/register'
     | '/reset-password'
+    | '/verify-email'
     | '/ai-models'
     | '/api-keys'
     | '/calendar'
+    | '/credits'
     | '/home'
     | '/integrations'
     | '/knowledge'
@@ -232,9 +298,13 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/projects'
+    | '/referrals'
     | '/settings'
     | '/studio'
     | '/workspace'
+    | '/auth/callback'
+    | '/invite/$code'
+    | '/ref/$code'
     | '/missions/$missionId'
     | '/projects/$projectId'
   fileRoutesByTo: FileRoutesByTo
@@ -243,11 +313,14 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/onboarding'
+    | '/pricing'
     | '/register'
     | '/reset-password'
+    | '/verify-email'
     | '/ai-models'
     | '/api-keys'
     | '/calendar'
+    | '/credits'
     | '/home'
     | '/integrations'
     | '/knowledge'
@@ -255,9 +328,13 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/projects'
+    | '/referrals'
     | '/settings'
     | '/studio'
     | '/workspace'
+    | '/auth/callback'
+    | '/invite/$code'
+    | '/ref/$code'
     | '/missions/$missionId'
     | '/projects/$projectId'
   id:
@@ -267,11 +344,14 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/onboarding'
+    | '/pricing'
     | '/register'
     | '/reset-password'
+    | '/verify-email'
     | '/_app/ai-models'
     | '/_app/api-keys'
     | '/_app/calendar'
+    | '/_app/credits'
     | '/_app/home'
     | '/_app/integrations'
     | '/_app/knowledge'
@@ -279,9 +359,13 @@ export interface FileRouteTypes {
     | '/_app/notifications'
     | '/_app/profile'
     | '/_app/projects'
+    | '/_app/referrals'
     | '/_app/settings'
     | '/_app/studio'
     | '/_app/workspace'
+    | '/auth/callback'
+    | '/invite/$code'
+    | '/ref/$code'
     | '/_app/missions/$missionId'
     | '/_app/projects/$projectId'
   fileRoutesById: FileRoutesById
@@ -292,12 +376,24 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  PricingRoute: typeof PricingRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  InviteCodeRoute: typeof InviteCodeRoute
+  RefCodeRoute: typeof RefCodeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -310,6 +406,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -347,6 +450,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ref/$code': {
+      id: '/ref/$code'
+      path: '/ref/$code'
+      fullPath: '/ref/$code'
+      preLoaderRoute: typeof RefCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/$code': {
+      id: '/invite/$code'
+      path: '/invite/$code'
+      fullPath: '/invite/$code'
+      preLoaderRoute: typeof InviteCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/workspace': {
       id: '/_app/workspace'
       path: '/workspace'
@@ -366,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/referrals': {
+      id: '/_app/referrals'
+      path: '/referrals'
+      fullPath: '/referrals'
+      preLoaderRoute: typeof AppReferralsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/projects': {
@@ -415,6 +546,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof AppHomeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/credits': {
+      id: '/_app/credits'
+      path: '/credits'
+      fullPath: '/credits'
+      preLoaderRoute: typeof AppCreditsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/calendar': {
@@ -483,6 +621,7 @@ interface AppRouteChildren {
   AppAiModelsRoute: typeof AppAiModelsRoute
   AppApiKeysRoute: typeof AppApiKeysRoute
   AppCalendarRoute: typeof AppCalendarRoute
+  AppCreditsRoute: typeof AppCreditsRoute
   AppHomeRoute: typeof AppHomeRoute
   AppIntegrationsRoute: typeof AppIntegrationsRoute
   AppKnowledgeRoute: typeof AppKnowledgeRoute
@@ -490,6 +629,7 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppProfileRoute: typeof AppProfileRoute
   AppProjectsRoute: typeof AppProjectsRouteWithChildren
+  AppReferralsRoute: typeof AppReferralsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppStudioRoute: typeof AppStudioRoute
   AppWorkspaceRoute: typeof AppWorkspaceRoute
@@ -499,6 +639,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAiModelsRoute: AppAiModelsRoute,
   AppApiKeysRoute: AppApiKeysRoute,
   AppCalendarRoute: AppCalendarRoute,
+  AppCreditsRoute: AppCreditsRoute,
   AppHomeRoute: AppHomeRoute,
   AppIntegrationsRoute: AppIntegrationsRoute,
   AppKnowledgeRoute: AppKnowledgeRoute,
@@ -506,6 +647,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppProfileRoute: AppProfileRoute,
   AppProjectsRoute: AppProjectsRouteWithChildren,
+  AppReferralsRoute: AppReferralsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppStudioRoute: AppStudioRoute,
   AppWorkspaceRoute: AppWorkspaceRoute,
@@ -519,8 +661,13 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  PricingRoute: PricingRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
+  InviteCodeRoute: InviteCodeRoute,
+  RefCodeRoute: RefCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
