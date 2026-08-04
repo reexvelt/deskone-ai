@@ -164,6 +164,36 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          kind: string
+          meta: Json
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string
+          id?: string
+          kind: string
+          meta?: Json
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          kind?: string
+          meta?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       files: {
         Row: {
           created_at: string
@@ -343,38 +373,61 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          commission_cents: number
           created_at: string
+          credits_earned: number
+          credits_purchased: number
           credits_total: number
           credits_used: number
           email: string | null
           id: string
           name: string | null
+          referral_code: string
+          referred_by: string | null
           updated_at: string
           workspace: Json
         }
         Insert: {
           avatar_url?: string | null
+          commission_cents?: number
           created_at?: string
+          credits_earned?: number
+          credits_purchased?: number
           credits_total?: number
           credits_used?: number
           email?: string | null
           id: string
           name?: string | null
+          referral_code: string
+          referred_by?: string | null
           updated_at?: string
           workspace?: Json
         }
         Update: {
           avatar_url?: string | null
+          commission_cents?: number
           created_at?: string
+          credits_earned?: number
+          credits_purchased?: number
           credits_total?: number
           credits_used?: number
           email?: string | null
           id?: string
           name?: string | null
+          referral_code?: string
+          referred_by?: string | null
           updated_at?: string
           workspace?: Json
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
@@ -415,6 +468,81 @@ export type Database = {
           status?: Database["public"]["Enums"]["project_status"]
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          code: string
+          commission_cents: number
+          commission_paid_at: string | null
+          created_at: string
+          id: string
+          invitee_credits_awarded: number
+          referred_user_id: string
+          referrer_credits_awarded: number
+          referrer_id: string
+          rewarded_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          commission_cents?: number
+          commission_paid_at?: string | null
+          created_at?: string
+          id?: string
+          invitee_credits_awarded?: number
+          referred_user_id: string
+          referrer_credits_awarded?: number
+          referrer_id: string
+          rewarded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          commission_cents?: number
+          commission_paid_at?: string | null
+          created_at?: string
+          id?: string
+          invitee_credits_awarded?: number
+          referred_user_id?: string
+          referrer_credits_awarded?: number
+          referrer_id?: string
+          rewarded_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reward_settings: {
+        Row: {
+          commission_percent: number
+          commission_scope: string
+          created_at: string
+          id: boolean
+          invitee_credits: number
+          referrer_credits: number
+          updated_at: string
+        }
+        Insert: {
+          commission_percent?: number
+          commission_scope?: string
+          created_at?: string
+          id?: boolean
+          invitee_credits?: number
+          referrer_credits?: number
+          updated_at?: string
+        }
+        Update: {
+          commission_percent?: number
+          commission_scope?: string
+          created_at?: string
+          id?: boolean
+          invitee_credits?: number
+          referrer_credits?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -485,12 +613,58 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          amount_cents: number
+          billing_interval: string
+          created_at: string
+          currency: string
+          current_period_end: string | null
+          id: string
+          plan: string
+          provider: string | null
+          provider_reference: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents?: number
+          billing_interval?: string
+          created_at?: string
+          currency?: string
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          provider?: string | null
+          provider_reference?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          billing_interval?: string
+          created_at?: string
+          currency?: string
+          current_period_end?: string | null
+          id?: string
+          plan?: string
+          provider?: string | null
+          provider_reference?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      gen_referral_code: { Args: never; Returns: string }
+      referral_code_owner: { Args: { _code: string }; Returns: string }
     }
     Enums: {
       asset_kind:

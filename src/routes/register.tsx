@@ -53,9 +53,13 @@ function RegisterPage() {
     if (password.length < 8) return toast.error("Use at least 8 characters");
     setLoading(true);
     try {
-      await register(name.trim(), email.trim(), password);
-      // No session means email confirmation is required.
+      const result = await register(name.trim(), email.trim(), password);
+      if (result?.needsVerification) {
+        navigate({ to: "/verify-email", search: { email: email.trim() }, replace: true });
+        return;
+      }
       setVerifyEmail(email.trim());
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Registration failed");
     } finally {

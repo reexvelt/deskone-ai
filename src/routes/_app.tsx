@@ -34,7 +34,10 @@ import {
   SquareTerminal,
   KeyRound,
   Building2,
+  Coins,
+  Gift,
   UserCircle2,
+
 } from "lucide-react";
 
 export const Route = createFileRoute("/_app")({
@@ -64,6 +67,13 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     ],
   },
   {
+    title: "Growth",
+    items: [
+      { label: "Credits", to: "/credits", icon: Coins },
+      { label: "Referrals", to: "/referrals", icon: Gift },
+    ],
+  },
+  {
     title: "Account",
     items: [
       { label: "Workspace", to: "/workspace", icon: Building2 },
@@ -72,6 +82,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
       { label: "Settings", to: "/settings", icon: Settings },
     ],
   },
+
 ];
 
 const mobileTabs: NavItem[] = [
