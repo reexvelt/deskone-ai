@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 export type MissionStatus = "planning" | "awaiting_approval" | "running" | "completed" | "cancelled" | "failed";
 export type ProjectStatus = "active" | "paused" | "archived" | "completed";
 export type NotificationCategory = "mission_completed" | "mission_failed" | "approval_required" | "integration_error" | "system_update";
-export type ProviderId = "openai" | "gemini" | "claude" | "openrouter";
+export type ProviderId = "openai" | "gemini" | "claude" | "elevenlabs" | "openrouter";
 
 export interface ExecutionStep {
   id: string;
