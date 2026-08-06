@@ -32,6 +32,7 @@ const PROVIDER_LABEL: Record<ProviderId, string> = {
   openai: "OpenAI",
   gemini: "Google Gemini",
   claude: "Anthropic Claude",
+  elevenlabs: "ElevenLabs",
   openrouter: "OpenRouter",
 };
 
