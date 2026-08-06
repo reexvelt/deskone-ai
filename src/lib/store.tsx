@@ -471,46 +471,42 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [knowledge, setKnowledge] = useState<KnowledgeFile[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [workspace, setWorkspace] = useState<WorkspaceMemory>(seedWorkspace());
+  const [workspace, setWorkspace] = useState<WorkspaceMemory>(emptyWorkspace());
   const [assets, setAssets] = useState<ProjectAsset[]>([]);
-  const [credits] = useState({ used: 4210, total: 10000 });
+  const [credits] = useState({ used: 0, total: 10000 });
+  const hydrated = useRef(false);
 
   useEffect(() => {
+    // Fresh workspaces start completely empty — only the service catalogues
+    // (integrations, models, providers) are pre-populated.
+    let data: Record<string, unknown> = {};
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) {
-        const data = JSON.parse(raw);
-        setMissions(data.missions ?? seedMissions());
-        setProjects(data.projects ?? seedProjects());
-        setIntegrations(data.integrations ?? seedIntegrations());
-        setModels(data.models ?? seedModels());
-        setProviders(data.providers ?? seedProviders());
-        setApiKeys(data.apiKeys ?? []);
-        setNotifications(data.notifications ?? seedNotifications());
-        setKnowledge(data.knowledge ?? seedKnowledge());
-        setEvents(data.events ?? seedEvents());
-        setWorkspace(data.workspace ?? seedWorkspace());
-        setAssets(data.assets ?? []);
-        return;
-      }
-    } catch {}
-    setMissions(seedMissions());
-    setProjects(seedProjects());
-    setIntegrations(seedIntegrations());
-    setModels(seedModels());
-    setProviders(seedProviders());
-    setApiKeys([]);
-    setNotifications(seedNotifications());
-    setKnowledge(seedKnowledge());
-    setEvents(seedEvents());
-    setWorkspace(seedWorkspace());
-    setAssets([]);
+      if (raw) data = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      /* corrupt cache — start clean */
+    }
+    setMissions((data.missions as Mission[]) ?? []);
+    setProjects((data.projects as Project[]) ?? []);
+    setIntegrations((data.integrations as Integration[]) ?? availableIntegrations());
+    setModels((data.models as AIModelInfo[]) ?? availableModels());
+    setProviders((data.providers as AIProvider[]) ?? availableProviders());
+    setApiKeys((data.apiKeys as ApiKey[]) ?? []);
+    setNotifications((data.notifications as NotificationItem[]) ?? []);
+    setKnowledge((data.knowledge as KnowledgeFile[]) ?? []);
+    setEvents((data.events as CalendarEvent[]) ?? []);
+    setWorkspace((data.workspace as WorkspaceMemory) ?? emptyWorkspace());
+    setAssets((data.assets as ProjectAsset[]) ?? []);
+    hydrated.current = true;
   }, []);
 
   useEffect(() => {
-    if (!missions.length && !projects.length) return;
+    // Persist only after hydration, so an empty workspace (or a user who just
+    // deleted everything) is saved correctly instead of being re-seeded.
+    if (!hydrated.current) return;
     localStorage.setItem(KEY, JSON.stringify({ missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, assets }));
   }, [missions, projects, integrations, models, providers, apiKeys, notifications, knowledge, events, workspace, assets]);
+
 
 
   // === Mission Execution Engine ===
