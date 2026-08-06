@@ -49,6 +49,7 @@ function HomePage() {
   const firstName = (user?.name ?? "there").split(" ")[0];
   const recentMissions = [...missions].sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
   const recentProjects = [...projects].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 3);
+  const hasWork = missions.length > 0 || projects.length > 0;
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8 sm:space-y-10">
@@ -66,9 +67,12 @@ function HomePage() {
 
       <OnboardingChecklist />
 
-      <StatGrid />
+      {/* A brand-new workspace stays calm: dashboards appear once there's real work. */}
+      {hasWork && (
+        <>
+          <StatGrid />
 
-      <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
         <section aria-labelledby="recent-missions" className="panel p-5 sm:p-6 lg:col-span-2">
           <div className="flex items-center justify-between gap-3">
             <h2 id="recent-missions" className="text-base font-semibold">
@@ -171,6 +175,8 @@ function HomePage() {
           </ul>
         )}
       </section>
+        </>
+      )}
     </div>
   );
 }
