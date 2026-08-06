@@ -49,6 +49,7 @@ function HomePage() {
   const firstName = (user?.name ?? "there").split(" ")[0];
   const recentMissions = [...missions].sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
   const recentProjects = [...projects].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 3);
+  const hasWork = missions.length > 0 || projects.length > 0;
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8 sm:space-y-10">
