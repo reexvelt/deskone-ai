@@ -330,89 +330,65 @@ function planFor(title: string, workspace?: WorkspaceMemory): { objective: strin
   };
 }
 
-const OWNER: ProjectMember = { id: "u1", name: "You", email: "you@deskone.app", role: "owner" };
+const OWNER: ProjectMember = { id: "u1", name: "You", email: "", role: "owner" };
 
-const seedProjects = (): Project[] => [
-  {
-    id: "p1", name: "Ebook Launch", description: "AI Execution Playbook — full go-to-market",
-    status: "active", color: "#3B82F6", cover: COVERS[0],
-    createdAt: Date.now() - 86400000 * 12, updatedAt: Date.now() - 86400000,
-    missionCount: 4, apps: ["Notion", "Gmail", "Stripe", "X"],
-    ownerId: "u1", members: [OWNER],
-    notes: "Focus on developer audience. Position around execution, not chat.",
-  },
-  {
-    id: "p2", name: "Content Engine", description: "YouTube + newsletter weekly cadence",
-    status: "active", color: "#7C5CFF", cover: COVERS[1],
-    createdAt: Date.now() - 86400000 * 30, updatedAt: Date.now() - 3600000 * 5,
-    missionCount: 7, apps: ["YouTube", "Notion", "Gmail"],
-    ownerId: "u1", members: [OWNER],
-  },
-  {
-    id: "p3", name: "Growth Ops", description: "Outbound sequences and paid campaigns",
-    status: "paused", color: "#22C55E", cover: COVERS[2],
-    createdAt: Date.now() - 86400000 * 20, updatedAt: Date.now() - 3600000 * 30,
-    missionCount: 3, apps: ["Gmail", "Slack", "Linear"],
-    ownerId: "u1", members: [OWNER],
-  },
-];
-
-const seedIntegrations = (): Integration[] => {
-  const now = Date.now();
+/**
+ * Integration catalogue. This is a static list of *available* services, not
+ * user data — nothing is pre-connected. Users connect what they actually use.
+ */
+const availableIntegrations = (): Integration[] => {
   const mk = (
-    id: string, name: string, category: string, connected: boolean,
+    id: string, name: string, category: string,
     description: string, accent: string,
-    opts: { perms?: string[]; actions?: string[]; sync?: number; auth?: Integration["authStatus"]; health?: number } = {},
+    opts: { perms?: string[]; actions?: string[] } = {},
   ): Integration => ({
-    id, name, category, connected, description, accent,
+    id, name, category, connected: false, description, accent,
     permissions: opts.perms,
     supportedActions: opts.actions,
-    lastSync: connected ? opts.sync ?? now - 3600000 * 2 : undefined,
-    authStatus: connected ? opts.auth ?? "healthy" : undefined,
-    health: connected ? opts.health ?? 98 : undefined,
   });
   return [
     // AI
-    mk("openai", "OpenAI", "AI", true, "GPT reasoning & multimodal models.", "#10A37F", { perms: ["chat.completions", "embeddings", "images"], actions: ["Generate text", "Embed", "Image gen"], health: 99 }),
-    mk("gemini", "Google Gemini", "AI", false, "Multimodal Gemini 2.5 family.", "#4285F4", { perms: ["generate", "embed"], actions: ["Generate", "Vision"] }),
-    mk("claude", "Anthropic Claude", "AI", false, "Long-context reasoning.", "#D97757", { perms: ["messages"], actions: ["Generate", "Analyze"] }),
-    mk("elevenlabs", "ElevenLabs", "AI", false, "Text-to-speech voices.", "#111111", { perms: ["voices", "generate"], actions: ["TTS", "Voice clone"] }),
+    mk("openai", "OpenAI", "AI", "GPT reasoning & multimodal models.", "#10A37F", { perms: ["chat.completions", "embeddings", "images"], actions: ["Generate text", "Embed", "Image gen"] }),
+    mk("gemini", "Google Gemini", "AI", "Multimodal Gemini 2.5 family.", "#4285F4", { perms: ["generate", "embed"], actions: ["Generate", "Vision"] }),
+    mk("claude", "Anthropic Claude", "AI", "Long-context reasoning.", "#D97757", { perms: ["messages"], actions: ["Generate", "Analyze"] }),
+    mk("elevenlabs", "ElevenLabs", "AI", "Text-to-speech voices.", "#111111", { perms: ["voices", "generate"], actions: ["TTS", "Voice clone"] }),
 
     // Storage
-    mk("gdrive", "Google Drive", "Storage", true, "Read and write files.", "#1FA463", { perms: ["drive.file", "drive.metadata"], actions: ["Upload", "Search", "Share"], sync: now - 86400000, health: 92 }),
-    mk("gdocs", "Google Docs", "Storage", true, "Create and edit documents.", "#4285F4", { perms: ["docs.readwrite"], actions: ["Create", "Edit"], sync: now - 3600000 * 6 }),
-    mk("gsheets", "Google Sheets", "Storage", false, "Structured data workflows.", "#0F9D58", { perms: ["sheets.readwrite"], actions: ["Read rows", "Append", "Update"] }),
-    mk("dropbox", "Dropbox", "Storage", false, "Cloud file storage.", "#0061FF", { perms: ["files.content.write"], actions: ["Upload", "Share"] }),
-    mk("onedrive", "OneDrive", "Storage", false, "Microsoft cloud storage.", "#0078D4", { perms: ["files.readwrite"], actions: ["Upload", "Sync"] }),
-    mk("notion", "Notion", "Storage", true, "Docs and databases.", "#000000", { perms: ["read_content", "update_content"], actions: ["Create page", "Update DB"], sync: now - 3600000 * 2 }),
+    mk("gdrive", "Google Drive", "Storage", "Read and write files.", "#1FA463", { perms: ["drive.file", "drive.metadata"], actions: ["Upload", "Search", "Share"] }),
+    mk("gdocs", "Google Docs", "Storage", "Create and edit documents.", "#4285F4", { perms: ["docs.readwrite"], actions: ["Create", "Edit"] }),
+    mk("gsheets", "Google Sheets", "Storage", "Structured data workflows.", "#0F9D58", { perms: ["sheets.readwrite"], actions: ["Read rows", "Append", "Update"] }),
+    mk("dropbox", "Dropbox", "Storage", "Cloud file storage.", "#0061FF", { perms: ["files.content.write"], actions: ["Upload", "Share"] }),
+    mk("onedrive", "OneDrive", "Storage", "Microsoft cloud storage.", "#0078D4", { perms: ["files.readwrite"], actions: ["Upload", "Sync"] }),
+    mk("notion", "Notion", "Storage", "Docs and databases.", "#000000", { perms: ["read_content", "update_content"], actions: ["Create page", "Update DB"] }),
 
     // Communication
-    mk("gmail", "Gmail", "Communication", true, "Send and manage email.", "#EA4335", { perms: ["gmail.send", "gmail.compose"], actions: ["Send", "Draft", "Search"], sync: now - 3600000 * 3, auth: "reauth_required", health: 68 }),
-    mk("slack", "Slack", "Communication", false, "Post and read messages.", "#4A154B", { perms: ["chat:write", "channels:read"], actions: ["Post", "Notify"] }),
-    mk("discord", "Discord", "Communication", false, "Server automations.", "#5865F2", { perms: ["messages.send"], actions: ["Post", "Webhook"] }),
+    mk("gmail", "Gmail", "Communication", "Send and manage email.", "#EA4335", { perms: ["gmail.send", "gmail.compose"], actions: ["Send", "Draft", "Search"] }),
+    mk("slack", "Slack", "Communication", "Post and read messages.", "#4A154B", { perms: ["chat:write", "channels:read"], actions: ["Post", "Notify"] }),
+    mk("discord", "Discord", "Communication", "Server automations.", "#5865F2", { perms: ["messages.send"], actions: ["Post", "Webhook"] }),
 
-    // Content / Publishing (social)
-    mk("youtube", "YouTube", "Publishing", false, "Upload and manage videos.", "#FF0000", { perms: ["youtube.upload"], actions: ["Upload", "Schedule", "Update meta"] }),
-    mk("instagram", "Instagram", "Publishing", false, "Publish reels, posts, stories.", "#E1306C", { perms: ["publish_content"], actions: ["Post", "Reel", "Story"] }),
-    mk("tiktok", "TikTok", "Publishing", false, "Upload and schedule videos.", "#010101", { perms: ["video.publish"], actions: ["Upload", "Schedule"] }),
-    mk("linkedin", "LinkedIn", "Publishing", false, "Publish posts and articles.", "#0A66C2", { perms: ["w_member_social"], actions: ["Post", "Article"] }),
-    mk("x", "X", "Publishing", false, "Post and schedule threads.", "#000000", { perms: ["tweet.write"], actions: ["Post", "Thread", "Schedule"] }),
-    mk("facebook", "Facebook", "Publishing", false, "Pages and posts.", "#1877F2", { perms: ["pages_manage_posts"], actions: ["Post", "Schedule"] }),
-    mk("wordpress", "WordPress", "Publishing", false, "Publish blog posts.", "#21759B", { perms: ["posts.publish"], actions: ["Draft", "Publish"] }),
+    // Publishing
+    mk("youtube", "YouTube", "Publishing", "Upload and manage videos.", "#FF0000", { perms: ["youtube.upload"], actions: ["Upload", "Schedule", "Update meta"] }),
+    mk("instagram", "Instagram", "Publishing", "Publish reels, posts, stories.", "#E1306C", { perms: ["publish_content"], actions: ["Post", "Reel", "Story"] }),
+    mk("tiktok", "TikTok", "Publishing", "Upload and schedule videos.", "#010101", { perms: ["video.publish"], actions: ["Upload", "Schedule"] }),
+    mk("linkedin", "LinkedIn", "Publishing", "Publish posts and articles.", "#0A66C2", { perms: ["w_member_social"], actions: ["Post", "Article"] }),
+    mk("x", "X", "Publishing", "Post and schedule threads.", "#000000", { perms: ["tweet.write"], actions: ["Post", "Thread", "Schedule"] }),
+    mk("facebook", "Facebook", "Publishing", "Pages and posts.", "#1877F2", { perms: ["pages_manage_posts"], actions: ["Post", "Schedule"] }),
+    mk("wordpress", "WordPress", "Publishing", "Publish blog posts.", "#21759B", { perms: ["posts.publish"], actions: ["Draft", "Publish"] }),
 
     // Content tools
-    mk("gcal", "Google Calendar", "Content", true, "Schedule and reminders.", "#4285F4", { perms: ["calendar.events"], actions: ["Create event", "Reminder"], sync: now - 3600000 }),
-    mk("figma", "Figma", "Content", false, "Frames and design assets.", "#F24E1E", { perms: ["files:read"], actions: ["Read frames", "Export"] }),
-    mk("canva", "Canva", "Content", false, "Design and templates.", "#00C4CC", { perms: ["designs.read"], actions: ["Export", "Duplicate"] }),
+    mk("gcal", "Google Calendar", "Content", "Schedule and reminders.", "#4285F4", { perms: ["calendar.events"], actions: ["Create event", "Reminder"] }),
+    mk("figma", "Figma", "Content", "Frames and design assets.", "#F24E1E", { perms: ["files:read"], actions: ["Read frames", "Export"] }),
+    mk("canva", "Canva", "Content", "Design and templates.", "#00C4CC", { perms: ["designs.read"], actions: ["Export", "Duplicate"] }),
 
     // Productivity
-    mk("github", "GitHub", "Productivity", true, "Repos, PRs, issues.", "#24292F", { perms: ["repo", "workflow"], actions: ["Create PR", "Issue", "Release"], sync: now - 3600000 * 4 }),
-    mk("linear", "Linear", "Productivity", false, "Issues and cycles.", "#5E6AD2", { perms: ["issues.write"], actions: ["Create issue", "Update"] }),
-    mk("stripe", "Stripe", "Productivity", false, "Products and checkout.", "#635BFF", { perms: ["products.write"], actions: ["Product", "Payment link"] }),
+    mk("github", "GitHub", "Productivity", "Repos, PRs, issues.", "#24292F", { perms: ["repo", "workflow"], actions: ["Create PR", "Issue", "Release"] }),
+    mk("linear", "Linear", "Productivity", "Issues and cycles.", "#5E6AD2", { perms: ["issues.write"], actions: ["Create issue", "Update"] }),
+    mk("stripe", "Stripe", "Productivity", "Products and checkout.", "#635BFF", { perms: ["products.write"], actions: ["Product", "Payment link"] }),
   ];
 };
 
-const seedModels = (): AIModelInfo[] => [
+/** Model catalogue — availability, not usage data. */
+const availableModels = (): AIModelInfo[] => [
   { id: "orion", name: "Orion 1", provider: "AnchorSpace", description: "Balanced reasoning model.", enabled: true, tag: "reasoning" },
   { id: "orion-pro", name: "Orion Pro", provider: "AnchorSpace", description: "Deep planning and long context.", enabled: true, tag: "reasoning" },
   { id: "quartz", name: "Quartz", provider: "AnchorSpace", description: "Ultra-fast utility model.", enabled: true, tag: "fast" },
@@ -420,100 +396,33 @@ const seedModels = (): AIModelInfo[] => [
   { id: "lens", name: "Lens", provider: "AnchorSpace", description: "Vision and screenshots.", enabled: false, tag: "vision" },
 ];
 
-const seedProviders = (): AIProvider[] => [
-  { id: "openai", name: "OpenAI", description: "GPT-class reasoning and multimodal models.", defaultModel: "gpt-5", enabled: true, isDefault: true, status: "connected", lastTestedAt: Date.now() - 3600000 },
+/** Provider catalogue — all start disconnected until the user adds a key. */
+const availableProviders = (): AIProvider[] => [
+  { id: "openai", name: "OpenAI", description: "GPT-class reasoning and multimodal models.", defaultModel: "gpt-5", enabled: false, isDefault: false, status: "disconnected" },
   { id: "gemini", name: "Google Gemini", description: "Multimodal Gemini 2.5 family.", defaultModel: "gemini-2.5-pro", enabled: false, isDefault: false, status: "disconnected" },
   { id: "claude", name: "Anthropic Claude", description: "Long-context reasoning and writing.", defaultModel: "claude-sonnet-4", enabled: false, isDefault: false, status: "disconnected" },
+  { id: "elevenlabs", name: "ElevenLabs", description: "Voice synthesis and narration.", defaultModel: "eleven_multilingual_v2", enabled: false, isDefault: false, status: "disconnected" },
   { id: "openrouter", name: "OpenRouter", description: "Unified router across many providers.", defaultModel: "auto", enabled: false, isDefault: false, status: "disconnected" },
 ];
 
-const seedWorkspace = (): WorkspaceMemory => ({
-  workspaceName: "AnchorSpace HQ",
-  brandName: "AnchorSpace",
-  brandColors: ["#3B82F6", "#7C5CFF", "#090B10"],
-  writingTone: "Confident, minimal, premium. Short sentences.",
+/** A brand-new workspace starts empty — the user fills this in. */
+const emptyWorkspace = (): WorkspaceMemory => ({
+  workspaceName: "",
+  brandName: "",
+  brandColors: [],
+  writingTone: "",
   preferredModel: "Orion Pro",
-  favoriteTemplates: ["Launch email", "Weekly newsletter", "YouTube script"],
+  favoriteTemplates: [],
   workingHoursStart: "09:00",
   workingHoursEnd: "18:00",
-  timeZone: "Europe/Lisbon",
+  timeZone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "UTC",
   language: "English",
-  socialAccounts: [
-    { platform: "X", handle: "@deskone" },
-    { platform: "LinkedIn", handle: "deskone" },
-  ],
-  businessInfo: "AI Execution Platform. Turns goals into completed work using connected apps.",
+  socialAccounts: [],
+  businessInfo: "",
 });
 
-const seedMissions = (): Mission[] => {
-  const m1 = planFor("Launch my ebook");
-  const m2 = planFor("Create YouTube content");
-  return [
-    {
-      id: "m1", title: "Launch my ebook", objective: m1.objective, status: "running", progress: 42,
-      createdAt: Date.now() - 3600000 * 6, startedAt: Date.now() - 3600000 * 5,
-      estimatedMinutes: m1.minutes, apps: m1.apps,
-      steps: m1.steps.map((s, i) => ({ ...s, status: i < 2 ? "done" : i === 2 ? "running" : "pending", completedAt: i < 2 ? Date.now() - 3600000 * (5 - i) : undefined })),
-      logs: [
-        { ts: Date.now() - 3600000 * 5, level: "info", message: "Mission approved. Execution started." },
-        { ts: Date.now() - 3600000 * 4, level: "success", message: "Launch narrative drafted." },
-        { ts: Date.now() - 3600000 * 3, level: "success", message: "Landing copy generated." },
-        { ts: Date.now() - 1800000, level: "info", message: "Preparing Stripe checkout." },
-      ],
-      outputs: ["Launch narrative", "Landing copy v1"],
-      files: [
-        { id: "f1", name: "launch-narrative.md", size: "12 KB", kind: "doc" },
-        { id: "f2", name: "landing-copy.md", size: "8 KB", kind: "doc" },
-      ],
-      projectId: "p1", cost: 1.24,
-    },
-    {
-      id: "m2", title: "Create YouTube content", objective: m2.objective, status: "completed", progress: 100,
-      createdAt: Date.now() - 86400000 * 2, startedAt: Date.now() - 86400000 * 2, completedAt: Date.now() - 86400000,
-      estimatedMinutes: m2.minutes, apps: m2.apps,
-      steps: m2.steps.map((s, i) => ({ ...s, status: "done", completedAt: Date.now() - 86400000 - i * 60000 })),
-      logs: [{ ts: Date.now() - 86400000, level: "success", message: "Mission completed." }],
-      outputs: ["Full script", "Thumbnail concepts"],
-      files: [{ id: "f3", name: "script.md", size: "22 KB", kind: "doc" }],
-      projectId: "p2", cost: 0.86,
-    },
-  ];
-};
+const KEY = "anchorspace.store.v6";
 
-const seedNotifications = (): NotificationItem[] => [
-  { id: "n1", category: "mission_completed", title: "Mission completed", body: "Create YouTube content finished with 4 outputs.", ts: Date.now() - 120000, read: false, archived: false, missionId: "m2" },
-  { id: "n2", category: "approval_required", title: "Approval required", body: "Draft social thread is ready for review.", ts: Date.now() - 3600000, read: false, archived: false },
-  { id: "n3", category: "system_update", title: "Orion Pro is faster", body: "Latency improved 32% on planning workloads.", ts: Date.now() - 3600000 * 5, read: true, archived: false },
-  { id: "n4", category: "integration_error", title: "Slack disconnected", body: "Reconnect to resume scheduled posts.", ts: Date.now() - 86400000, read: true, archived: false },
-  { id: "n5", category: "mission_failed", title: "Mission failed", body: "Weekly digest — retry available.", ts: Date.now() - 86400000 * 2, read: true, archived: false },
-];
-
-const seedKnowledge = (): KnowledgeFile[] => [
-  { id: "k1", name: "Brand voice guidelines.pdf", type: "pdf", size: "48 KB", uploadedAt: Date.now() - 86400000 * 2, missionUsage: 12, tag: "Brand" },
-  { id: "k2", name: "Product spec.docx", type: "doc", size: "112 KB", uploadedAt: Date.now() - 86400000 * 4, missionUsage: 8, tag: "Product" },
-  { id: "k3", name: "Q4 forecast.xlsx", type: "sheet", size: "68 KB", uploadedAt: Date.now() - 86400000 * 7, missionUsage: 3, tag: "Finance" },
-  { id: "k4", name: "Hero screenshot.png", type: "image", size: "1.2 MB", uploadedAt: Date.now() - 86400000, missionUsage: 5, tag: "Assets" },
-  { id: "k5", name: "Sales scripts.txt", type: "text", size: "22 KB", uploadedAt: Date.now() - 86400000 * 3, missionUsage: 6, tag: "Sales" },
-];
-
-const seedEvents = (): CalendarEvent[] => {
-  const today = new Date();
-  const mk = (d: number, title: string, time: string, type: CalendarEvent["type"], color: string): CalendarEvent => ({
-    id: crypto.randomUUID(),
-    title, time, type, color,
-    date: new Date(today.getFullYear(), today.getMonth(), d).getTime(),
-  });
-  return [
-    mk(today.getDate(), "Ebook launch email", "14:00", "publish", "#3B82F6"),
-    mk(today.getDate() + 1, "Weekly content sync", "09:00", "mission", "#7C5CFF"),
-    mk(today.getDate() + 2, "Draft newsletter", "11:00", "mission", "#22C55E"),
-    mk(today.getDate() + 4, "Newsletter drop", "10:00", "publish", "#22C55E"),
-    mk(today.getDate() + 6, "Q4 review deadline", "17:00", "deadline", "#F59E0B"),
-    mk(today.getDate() + 8, "Product update reminder", "10:00", "reminder", "#7C5CFF"),
-  ];
-};
-
-const KEY = "deskone.store.v5";
 
 const HASHTAG_POOLS: Record<string, string[]> = {
   default: ["#AItools", "#Productivity", "#ContentCreator", "#BuildInPublic", "#SaaS", "#Automation", "#Founders", "#Marketing"],
