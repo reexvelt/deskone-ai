@@ -66,9 +66,12 @@ function HomePage() {
 
       <OnboardingChecklist />
 
-      <StatGrid />
+      {/* A brand-new workspace stays calm: dashboards appear once there's real work. */}
+      {hasWork && (
+        <>
+          <StatGrid />
 
-      <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
         <section aria-labelledby="recent-missions" className="panel p-5 sm:p-6 lg:col-span-2">
           <div className="flex items-center justify-between gap-3">
             <h2 id="recent-missions" className="text-base font-semibold">
