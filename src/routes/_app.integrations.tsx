@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Check, RefreshCw, ShieldAlert, ShieldCheck, Plug, Search, Clock } from "lucide-react";
+import { RefreshCw, ShieldAlert, ShieldCheck, Plug, Search, Clock, Loader2, TriangleAlert } from "lucide-react";
+import { ConnectDialog } from "@/components/connect-dialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +25,8 @@ export const Route = createFileRoute("/_app/integrations")({
 });
 
 function IntegrationsPage() {
-  const { integrations, toggleIntegration, syncIntegration, reconnectIntegration } = useStore();
+  const { integrations, disconnectIntegration, syncIntegration, reconnectIntegration } = useStore();
+  const [connectId, setConnectId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<"all" | "connected" | "available">("all");
 
@@ -96,9 +98,10 @@ function IntegrationsPage() {
                 <IntegrationCard
                   key={i.id}
                   i={i}
-                  onToggle={() => {
-                    toggleIntegration(i.id);
-                    toast.success(i.connected ? `${i.name} disconnected` : `${i.name} connected`);
+                  onConnect={() => setConnectId(i.id)}
+                  onDisconnect={() => {
+                    disconnectIntegration(i.id);
+                    toast.success(`${i.name} disconnected`);
                   }}
                   onSync={() => { syncIntegration(i.id); toast.success(`${i.name} synced`); }}
                   onReconnect={() => { reconnectIntegration(i.id); toast.success(`${i.name} reconnected`); }}
@@ -108,18 +111,26 @@ function IntegrationsPage() {
           </section>
         ))
       )}
+      <ConnectDialog
+        integration={integrations.find((i) => i.id === connectId) ?? null}
+        open={connectId !== null}
+        onOpenChange={(v) => setConnectId(v ? connectId : null)}
+      />
     </div>
   );
 }
 
 function IntegrationCard({
-  i, onToggle, onSync, onReconnect,
+  i, onConnect, onDisconnect, onSync, onReconnect,
 }: {
   i: Integration;
-  onToggle: () => void;
+  onConnect: () => void;
+  onDisconnect: () => void;
   onSync: () => void;
   onReconnect: () => void;
 }) {
+  const state = i.connectionState ?? (i.connected ? "connected" : "disconnected");
+  const pending = state === "connecting" || state === "awaiting_oauth";
   const needsReauth = i.connected && i.authStatus === "reauth_required";
   const health = i.health ?? 0;
   const healthTone = health >= 90 ? "text-success" : health >= 60 ? "text-warning" : "text-destructive";
@@ -150,11 +161,23 @@ function IntegrationCard({
                   <ShieldCheck className="h-3 w-3" /> Connected
                 </span>
               )
+            ) : pending ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                {state === "connecting" ? "Connecting" : "Waiting for OAuth"}
+              </span>
+            ) : state === "error" ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-[10px] font-medium text-destructive">
+                <TriangleAlert className="h-3 w-3" /> Failed
+              </span>
             ) : (
               <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-medium text-muted-foreground">Available</span>
             )}
           </div>
           <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">{i.description}</div>
+          {i.accountLabel && (
+            <div className="mt-1 truncate text-[11px] text-muted-foreground/80">{i.accountLabel}</div>
+          )}
         </div>
       </div>
 
@@ -212,13 +235,19 @@ function IntegrationCard({
                 <RefreshCw className="mr-1 h-3.5 w-3.5" /> Sync
               </Button>
             )}
-            <Button size="sm" variant="ghost" className="h-8 rounded-full text-muted-foreground" onClick={onToggle}>
+            <Button size="sm" variant="ghost" className="h-8 rounded-full text-muted-foreground" onClick={onDisconnect}>
               Disconnect
             </Button>
           </>
         ) : (
-          <Button size="sm" className="h-8 rounded-full" onClick={onToggle}>
-            <Plug className="mr-1 h-3.5 w-3.5" /> Connect
+          <Button size="sm" className="h-8 rounded-full" onClick={onConnect}>
+            {pending ? (
+              <><Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> Resume</>
+            ) : state === "error" ? (
+              <><Plug className="mr-1 h-3.5 w-3.5" /> Try again</>
+            ) : (
+              <><Plug className="mr-1 h-3.5 w-3.5" /> Connect</>
+            )}
           </Button>
         )}
       </div>

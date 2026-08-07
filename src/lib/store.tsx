@@ -44,6 +44,8 @@ export interface Mission {
   files: MissionFile[];
   projectId?: string;
   cost?: number;
+  /** When set, the mission is planned to run/publish at this time (Calendar). */
+  scheduledAt?: number;
 }
 
 export interface ProjectMember {
@@ -81,6 +83,10 @@ export interface Integration {
   health?: number; // 0-100
   supportedActions?: string[];
   accent?: string;
+  /** Live connection lifecycle used by the guided OAuth flow. */
+  connectionState?: "disconnected" | "connecting" | "awaiting_oauth" | "connected" | "error";
+  accountLabel?: string;
+  errorMessage?: string;
 }
 
 export interface AIModelInfo {
@@ -211,6 +217,11 @@ interface StoreState {
   updateProject: (id: string, patch: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   toggleIntegration: (id: string) => void;
+  beginConnect: (id: string) => void;
+  authorizeIntegration: (id: string, accountLabel: string) => void;
+  failIntegration: (id: string, message?: string) => void;
+  disconnectIntegration: (id: string) => void;
+  scheduleMission: (id: string, at: number | undefined) => void;
   syncIntegration: (id: string) => void;
   reconnectIntegration: (id: string) => void;
   toggleModel: (id: string) => void;
@@ -726,6 +737,44 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       deleteProject(id) {
         setProjects((ps) => ps.filter((p) => p.id !== id));
         setMissions((ms) => ms.map((m) => (m.projectId === id ? { ...m, projectId: undefined } : m)));
+      },
+      scheduleMission(id, at) {
+        setMissions((ms) => ms.map((m) => (m.id === id ? { ...m, scheduledAt: at } : m)));
+      },
+      beginConnect(id) {
+        setIntegrations((xs) => xs.map((i) => (i.id === id
+          ? { ...i, connectionState: "connecting", errorMessage: undefined }
+          : i)));
+        // Hand off to the provider consent screen.
+        window.setTimeout(() => {
+          setIntegrations((xs) => xs.map((i) => (i.id === id && i.connectionState !== "connected"
+            ? { ...i, connectionState: "awaiting_oauth" }
+            : i)));
+        }, 900);
+      },
+      authorizeIntegration(id, accountLabel) {
+        setIntegrations((xs) => xs.map((i) => (i.id === id
+          ? {
+              ...i,
+              connected: true,
+              connectionState: "connected",
+              accountLabel,
+              authStatus: "healthy",
+              health: 99,
+              lastSync: Date.now(),
+              errorMessage: undefined,
+            }
+          : i)));
+      },
+      failIntegration(id, message) {
+        setIntegrations((xs) => xs.map((i) => (i.id === id
+          ? { ...i, connectionState: "error", errorMessage: message ?? "Authorization was cancelled." }
+          : i)));
+      },
+      disconnectIntegration(id) {
+        setIntegrations((xs) => xs.map((i) => (i.id === id
+          ? { ...i, connected: false, connectionState: "disconnected", accountLabel: undefined, authStatus: undefined, health: undefined, errorMessage: undefined }
+          : i)));
       },
       toggleIntegration(id) {
         setIntegrations((xs) => xs.map((i) => (i.id === id

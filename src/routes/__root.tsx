@@ -1,7 +1,9 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth";
 import { StoreProvider } from "@/lib/store";
+import { ThemeProvider } from "@/lib/theme";
 import { Toaster } from "@/components/ui/sonner";
+
 import "@/styles.css";
 
 export const Route = createRootRoute({
@@ -32,12 +34,14 @@ function RootLayout() {
         <HeadContent />
       </head>
       <body className="min-h-dvh bg-background text-foreground antialiased">
-        <AuthProvider>
-          <StoreProvider>
-            <Outlet />
-            <Toaster />
-          </StoreProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <StoreProvider>
+              <Outlet />
+              <Toaster />
+            </StoreProvider>
+          </AuthProvider>
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>
