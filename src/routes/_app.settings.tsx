@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/lib/auth";
 import { useStore } from "@/lib/store";
+import { useTheme, type ThemeChoice } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/settings")({
@@ -39,6 +42,14 @@ function SettingsPage() {
       </div>
 
       <div className="space-y-4">
+        <Card className="border-border bg-card p-6">
+          <div className="text-sm font-semibold">Appearance</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            AnchorSpace is dark-first. Light and system themes are fully supported.
+          </div>
+          <ThemePicker />
+        </Card>
+
         <Card className="border-border bg-card p-6">
           <div className="text-sm font-semibold">Mission execution</div>
           <div className="mt-1 text-xs text-muted-foreground">Control how AnchorSpace executes on your behalf.</div>
@@ -87,6 +98,37 @@ function SettingsPage() {
           </Row>
         </Card>
       </div>
+    </div>
+  );
+}
+
+const THEMES: { id: ThemeChoice; label: string; icon: typeof Sun }[] = [
+  { id: "system", label: "System", icon: Monitor },
+  { id: "light", label: "Light", icon: Sun },
+  { id: "dark", label: "Dark", icon: Moon },
+];
+
+function ThemePicker() {
+  const { theme, setTheme } = useTheme();
+  return (
+    <div className="mt-5 grid grid-cols-3 gap-3">
+      {THEMES.map((t) => (
+        <button
+          key={t.id}
+          onClick={() => {
+            setTheme(t.id);
+            toast.success(`${t.label} theme applied`);
+          }}
+          aria-pressed={theme === t.id}
+          className={cn(
+            "flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border bg-surface/60 p-4 text-xs font-medium transition",
+            theme === t.id ? "border-primary text-foreground ring-1 ring-primary/40" : "border-border text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <t.icon className="h-5 w-5" />
+          {t.label}
+        </button>
+      ))}
     </div>
   );
 }
